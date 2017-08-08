@@ -1,7 +1,7 @@
 # Личный проект «Кексобукинг» [![Build status][travis-image]][travis-url]
 
 * Студент: [Nurkin Azamat](https://up.htmlacademy.ru/javascript/10/user/189072).
-* Наставник: `Неизвестно`.
+* Наставник: [Денис Золкин](https://up.htmlacademy.ru/javascript/10/user/31853).
 
 ---
 
