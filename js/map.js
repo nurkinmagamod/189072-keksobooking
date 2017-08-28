@@ -1,15 +1,19 @@
 'use strict';
+
 (function () {
-  var PERSONS_AVATARS = ['img/avatars/user01.png', 'img/avatars/user02.png', 'img/avatars/user03.png', 'img/avatars/user04.png', 'img/avatars/user05.png', 'img/avatars/user06.png', 'img/avatars/user07.png', 'img/avatars/user08.png'];
   var OFFER_TITLES = ['Большая уютная квартира', 'Маленькая неуютная квартира', 'Огромный прекрасный дворец', 'Маленький ужасный дворец', 'Красивый гостевой домик', 'Некрасивый негостеприимный домик', 'Уютное бунгало далеко от моря', 'Неуютное бунгало по колено в воде'];
   var TYPES_OF_APARTMENTS = ['flat', 'house', 'bungalo'];
-  var TIME_ARRAY = ['12:00', '13:00', '14:00'];
-  var FEATURES_ARRAY = ['wifi', 'dishwasher', 'parking', 'washer', 'elevator', 'conditioner'];
-  var NUMBER_OF_OBJ = 8;
+  var CHECK_IN_OUT_TIMES = ['12:00', '13:00', '14:00'];
+  var APARTMENT_FEATURES = ['wifi', 'dishwasher', 'parking', 'washer', 'elevator', 'conditioner'];
+  var RUSSIAN_APARTMENT_TYPES = {
+    flat: 'Квартира',
+    house: 'Дом',
+    bungalo: 'Бунгало'
+  };
   var PIN_CONTAINER_WIDTH = 56;
   var PIN_CONTAINER_HEIGHT = 75;
-  var MIN_PRICE_VALUE = 1000;
-  var MAX_PRICE_VALUE = 1000000;
+  var MIN_PRICE = 1000;
+  var MAX_PRICE = 1000000;
   var MIN_NUMBER_OF_ROOMS = 1;
   var MAX_NUMBER_OF_ROOMS = 5;
   var MIN_NUMBER_OF_GUESTS = 1;
@@ -18,8 +22,11 @@
   var MAX_X_LOCATION = 900;
   var MIN_Y_LOCATION = 100;
   var MAX_Y_LOCATION = 500;
+  var PIN_WIDTH = 40;
+  var PIN_HEIGHT = 40;
+  var numberOfObjects = 8;
 
-  var sampleObj = objArrayInit(NUMBER_OF_OBJ);
+  var sampleObj = offerObjectsInit(numberOfObjects);
 
   function randomInteger(min, max) {
     var rand = min - 0.5 + Math.random() * (max - min + 1);
@@ -32,98 +39,92 @@
   }
 
   function randomLengthArrayInit(arr) {
-    var arr2 = arr.slice(0, randomInteger(1, FEATURES_ARRAY.length));
-    return arr2;
+    return arr.slice(0, randomInteger(1, APARTMENT_FEATURES.length));
   }
-  function objArrayInit(numberOfObjcts) {
+
+  function offerObjectsInit(numberOfObj) {
     var objects = [];
-    for (var i = 0; i < numberOfObjcts; i++) {
-      objects[i] =
-      {
+
+    for (var i = 0; i < numberOfObj; i++) {
+      var locationX = randomInteger(MIN_X_LOCATION, MAX_X_LOCATION) - PIN_CONTAINER_WIDTH / 2;
+      var locationY = randomInteger(MIN_Y_LOCATION, MAX_Y_LOCATION) - PIN_CONTAINER_HEIGHT;
+      objects.push({
         author: {
-          avatar: PERSONS_AVATARS[i]
+          avatar: 'img/avatars/user0' + (+i + 1) + '.png'
         },
         offer: {
           title: OFFER_TITLES[i],
-          address: '',
-          price: randomInteger(MIN_PRICE_VALUE, MAX_PRICE_VALUE),
+          address: locationX + ',' + ' ' + locationY,
+          price: randomInteger(MIN_PRICE, MAX_PRICE),
           type: getRandomItem(TYPES_OF_APARTMENTS),
           rooms: randomInteger(MIN_NUMBER_OF_ROOMS, MAX_NUMBER_OF_ROOMS),
           guests: randomInteger(MIN_NUMBER_OF_GUESTS, MAX_NUMBER_OF_GUESTS),
-          checkin: getRandomItem(TIME_ARRAY),
-          checkout: getRandomItem(TIME_ARRAY),
-          features: randomLengthArrayInit(FEATURES_ARRAY),
+          checkin: getRandomItem(CHECK_IN_OUT_TIMES),
+          checkout: getRandomItem(CHECK_IN_OUT_TIMES),
+          features: randomLengthArrayInit(APARTMENT_FEATURES),
           description: '',
           photos: []
         },
         location: {
-          x: randomInteger(MIN_X_LOCATION, MAX_X_LOCATION),
-          y: randomInteger(MIN_Y_LOCATION, MAX_Y_LOCATION)
+          x: locationX,
+          y: locationY
         }
-      };
-      objects[i].offer.address = objects[i].location.x + ',' + ' ' + objects[i].location.y;
+      });
     }
     return objects;
   }
 
-
   function pinRender(objToRend, pinHeigh, pinWidth) {
-    var map1 = document.querySelector('.tokyo__pin-map');
+    var pinMapElement = document.querySelector('.tokyo__pin-map');
     var fragment = document.createDocumentFragment();
 
     for (var i = 0; i < objToRend.length; i++) {
-      var elem = document.createElement('div');
-      var elem2 = document.createElement('img');
-      elem.className = 'pin';
-      elem.style.left = objToRend[i].location.x - PIN_CONTAINER_WIDTH / 2 + 'px';
-      elem.style.top = objToRend[i].location.y - PIN_CONTAINER_HEIGHT + 'px';
-      elem2.className = 'rounded';
-      elem2.setAttribute('width', pinWidth);
-      elem2.setAttribute('src', objToRend[i].author.avatar);
-      elem2.setAttribute('height', pinHeigh);
-      elem.appendChild(elem2);
-      fragment.appendChild(elem);
+      var currentObjToRend = objToRend[i];
+      var pinWrapper = document.createElement('div');
+      var pinImage = document.createElement('img');
+      pinWrapper.className = 'pin';
+      pinWrapper.style.left = currentObjToRend.location.x + 'px';
+      pinWrapper.style.top = currentObjToRend.location.y + 'px';
+      pinImage.className = 'rounded';
+      pinImage.setAttribute('width', pinWidth);
+      pinImage.setAttribute('src', objToRend[i].author.avatar);
+      pinImage.setAttribute('height', pinHeigh);
+      pinWrapper.appendChild(pinImage);
+      fragment.appendChild(pinWrapper);
     }
-    map1.appendChild(fragment);
+    pinMapElement.appendChild(fragment);
 
   }
-  pinRender(sampleObj, '40', '40');
 
-  function findFlatType(typesOfApartment) {
-    if (typesOfApartment.type === 'flat') {
-      return 'Квартира';
-    } else if (typesOfApartment.type === 'house') {
-      return 'Дом';
-    } else {
-      return 'Бунгало';
-    }
-  }
+  pinRender(sampleObj, PIN_HEIGHT, PIN_WIDTH);
 
   function renderDialogPanel(objsArray) {
-    var offerDialog = document.querySelector('#offer-dialog');
+    var offerDialog = document.getElementById('offer-dialog');
     var replaceEr = offerDialog.querySelector('.dialog__panel');
     var dialogPanelTemplate = document.querySelector('#lodge-template').content;
     var dialogPanelElement = dialogPanelTemplate.cloneNode(true);
-    var listEl = dialogPanelElement.querySelector('.dialog__panel');
+    var lodgeElement = dialogPanelElement.querySelector('.dialog__panel');
     var dialogPanelFeatures = dialogPanelElement.querySelector('.lodge__features');
     var dialogTitle = document.querySelector('.dialog__title');
-    var avatarIMG = dialogTitle.getElementsByTagName('img');
+    var avatarIMG = dialogTitle.querySelector('img');
+    var apartmentTypeText = RUSSIAN_APARTMENT_TYPES[objsArray.offer.type];
 
-    listEl.querySelector('.lodge__title').textContent = objsArray[0].offer.title;
-    listEl.querySelector('.lodge__address').textContent = objsArray[0].offer.address;
-    listEl.querySelector('.lodge__price').textContent = objsArray[0].offer.price + ' ₽/ночь';
-    listEl.querySelector('.lodge__type').textContent = findFlatType(objsArray[0].offer);
-    listEl.querySelector('.lodge__rooms-and-guests').textContent = 'Для ' + objsArray[0].offer.guests + ' гостей в ' + objsArray[0].offer.rooms + ' комнатах';
-    listEl.querySelector('.lodge__checkin-time').textContent = 'Заезд после ' + objsArray[0].offer.checkin + ', выезд до ' + objsArray[0].offer.checkout;
-    listEl.querySelector('.lodge__description').textContent = objsArray[0].offer.description;
+    lodgeElement.querySelector('.lodge__title').textContent = objsArray.offer.title;
+    lodgeElement.querySelector('.lodge__address').textContent = objsArray.offer.address;
+    lodgeElement.querySelector('.lodge__price').textContent = objsArray.offer.price + ' ₽/ночь';
+    lodgeElement.querySelector('.lodge__type').textContent = apartmentTypeText;
+    lodgeElement.querySelector('.lodge__rooms-and-guests').textContent = 'Для ' + objsArray.offer.guests + ' гостей в ' + objsArray.offer.rooms + ' комнатах';
+    lodgeElement.querySelector('.lodge__checkin-time').textContent = 'Заезд после ' + objsArray.offer.checkin + ', выезд до ' + objsArray.offer.checkout;
+    lodgeElement.querySelector('.lodge__description').textContent = objsArray.offer.description;
 
-    avatarIMG[0].setAttribute('src', objsArray[0].author.avatar);
-    for (var i = 0; i < objsArray[0].offer.features.length; i++) {
+    avatarIMG.setAttribute('src', objsArray.author.avatar);
+    for (var i = 0; i < objsArray.offer.features.length; i++) {
       var newSpan = document.createElement('span');
-      newSpan.className = 'feature__image feature__image--' + objsArray[0].offer.features[i];
+      newSpan.className = 'feature__image feature__image--' + objsArray.offer.features[i];
       dialogPanelFeatures.appendChild(newSpan);
     }
     offerDialog.replaceChild(dialogPanelElement, replaceEr);
   }
-  renderDialogPanel(sampleObj);
+
+  renderDialogPanel(sampleObj[0]);
 })();
