@@ -48,6 +48,7 @@
   var MAX_Y_LOCATION = 500;
   var PIN_IMAGE_WIDTH = 40;
   var PIN_IMAGE_HEIGHT = 40;
+  var selectedTd;
 
   function randomInteger(min, max) {
     var rand = min - 0.5 + Math.random() * (max - min + 1);
@@ -95,15 +96,66 @@
     return objects;
   }
 
+  function highlight(node) {
+    if (selectedTd) {
+      selectedTd.classList.remove('pin--active');
+    }
+    selectedTd = node;
+    selectedTd.classList.add('pin--active');
+  }
+
+  function pinClickHandler(evt) {
+    if (evt.target.tagName === 'DIV') {
+      highlight(event.target);
+      renderDialogPanel(offers[event.target.getAttribute('data-item')]);
+      document.addEventListener('keydown', dialogCloseKeyDownHandler);
+      offerDialog.style.display = 'block';
+    } else if (evt.target.tagName === 'IMG') {
+      highlight(event.target.parentNode);
+      renderDialogPanel(offers[event.target.parentNode.getAttribute('data-item')]);
+      offerDialog.style.display = 'block';
+      document.addEventListener('keydown', dialogCloseKeyDownHandler);
+    } else {
+      return;
+    }
+  }
+
+  function pinKeyDownHandler(evt) {
+    if (evt.keyCode === 13) {
+      highlight(event.target.parentNode);
+      renderDialogPanel(offers[event.target.parentNode.getAttribute('data-item')]);
+      offerDialog.style.display = 'block';
+    }
+  }
+
+  function dialogCloseClickHandler() {
+    offerDialog.style.display = 'none';
+    selectedTd.classList.remove('pin--active');
+    document.removeEventListener('keydown', dialogCloseKeyDownHandler);
+  }
+
+  function dialogCloseKeyDownHandler(evt) {
+    if (evt.keyCode === 27) {
+      offerDialog.style.display = 'none';
+      selectedTd.classList.remove('pin--active');
+      document.removeEventListener('keydown', dialogCloseKeyDownHandler);
+    }
+  }
+
   function renderPin(objToRend) {
     var pinMapElement = document.querySelector('.tokyo__pin-map');
     var fragment = document.createDocumentFragment();
+
+    pinMapElement.addEventListener('click', pinClickHandler);
+    pinMapElement.addEventListener('keydown', pinKeyDownHandler);
 
     for (var i = 0; i < objToRend.length; i++) {
       var currentObjToRend = objToRend[i];
       var pinWrapper = document.createElement('div');
       var pinImage = document.createElement('img');
       pinWrapper.className = 'pin';
+      pinImage.setAttribute('tabindex', 0);
+      pinWrapper.setAttribute('data-item', i);
       pinWrapper.style.left = currentObjToRend.location.x + 'px';
       pinWrapper.style.top = currentObjToRend.location.y + 'px';
       pinImage.className = 'rounded';
@@ -117,8 +169,7 @@
   }
 
   function renderDialogPanel(objsArray) {
-    var offerDialog = document.getElementById('offer-dialog');
-    var replaceEr = offerDialog.querySelector('.dialog__panel');
+    var replaceElem = offerDialog.querySelector('.dialog__panel');
     var dialogPanelTemplate = document.getElementById('lodge-template').content;
     var dialogPanelElement = dialogPanelTemplate.cloneNode(true);
     var lodgeElement = dialogPanelElement.querySelector('.dialog__panel');
@@ -142,10 +193,16 @@
       newSpan.className = 'feature__image feature__image--' + features[i];
       dialogPanelFeatures.appendChild(newSpan);
     }
-    offerDialog.replaceChild(dialogPanelElement, replaceEr);
+    offerDialog.replaceChild(dialogPanelElement, replaceElem);
   }
 
+  var offerDialog = document.getElementById('offer-dialog');
+  var dialogCloseElement = document.querySelector('.dialog__close');
   var offers = createRandomOffers();
+
   renderPin(offers);
   renderDialogPanel(offers[0]);
+
+  dialogCloseElement.addEventListener('click', dialogCloseClickHandler);
+
 })();
