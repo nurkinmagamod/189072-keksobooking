@@ -34,6 +34,10 @@
     house: 'Дом',
     bungalo: 'Бунгало'
   };
+  var KEY_CODES = {
+    ESC: 27,
+    ENTER: 13
+  };
   var PIN_CONTAINER_WIDTH = 56;
   var PIN_CONTAINER_HEIGHT = 75;
   var MIN_PRICE = 1000;
@@ -104,41 +108,48 @@
     selectedTd.classList.add('pin--active');
   }
 
+  function showDialog() {
+    offerDialog.classList.remove('hidden');
+  }
+
+  function addKeyDownListner() {
+    document.addEventListener('keydown', dialogCloseKeyDownHandler);
+  }
+
   function pinClickHandler(evt) {
-    if (evt.target.tagName === 'DIV') {
-      highlight(event.target);
-      renderDialogPanel(offers[event.target.getAttribute('data-item')]);
-      document.addEventListener('keydown', dialogCloseKeyDownHandler);
-      offerDialog.style.display = 'block';
-    } else if (evt.target.tagName === 'IMG') {
-      highlight(event.target.parentNode);
-      renderDialogPanel(offers[event.target.parentNode.getAttribute('data-item')]);
-      offerDialog.style.display = 'block';
-      document.addEventListener('keydown', dialogCloseKeyDownHandler);
-    } else {
-      return;
-    }
+    var pinMap = evt.target.tagName === 'DIV' ? evt.target : evt.target.parentNode;
+    var pinDataID = pinMap.getAttribute('data-item');
+
+    highlight(pinMap);
+    renderDialogPanel(offers[pinDataID]);
+    addKeyDownListner();
+    showDialog();
   }
 
   function pinKeyDownHandler(evt) {
-    if (evt.keyCode === 13) {
-      highlight(event.target.parentNode);
-      renderDialogPanel(offers[event.target.parentNode.getAttribute('data-item')]);
-      offerDialog.style.display = 'block';
+    var pinDataID = event.target.parentNode.getAttribute('data-item');
+
+    if (evt.keyCode === KEY_CODES.ENTER) {
+      renderDialogPanel(offers[pinDataID]);
+      showDialog();
+      highlight(evt.target.parentNode);
+      document.addEventListener('keydown', dialogCloseKeyDownHandler);
     }
   }
 
-  function dialogCloseClickHandler() {
-    offerDialog.style.display = 'none';
+  function dialogCloseAction() {
+    offerDialog.classList.add('hidden');
     selectedTd.classList.remove('pin--active');
     document.removeEventListener('keydown', dialogCloseKeyDownHandler);
   }
 
+  function dialogCloseClickHandler() {
+    dialogCloseAction();
+  }
+
   function dialogCloseKeyDownHandler(evt) {
-    if (evt.keyCode === 27) {
-      offerDialog.style.display = 'none';
-      selectedTd.classList.remove('pin--active');
-      document.removeEventListener('keydown', dialogCloseKeyDownHandler);
+    if (evt.keyCode === KEY_CODES.ESC) {
+      dialogCloseAction();
     }
   }
 
@@ -153,6 +164,7 @@
       var currentObjToRend = objToRend[i];
       var pinWrapper = document.createElement('div');
       var pinImage = document.createElement('img');
+
       pinWrapper.className = 'pin';
       pinImage.setAttribute('tabindex', 0);
       pinWrapper.setAttribute('data-item', i);
