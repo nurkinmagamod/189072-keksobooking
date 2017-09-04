@@ -52,6 +52,7 @@
   var MAX_Y_LOCATION = 500;
   var PIN_IMAGE_WIDTH = 40;
   var PIN_IMAGE_HEIGHT = 40;
+  var ERROR_OUTLINE = '2px solid red';
   var selectedTd;
 
   function randomInteger(min, max) {
@@ -219,5 +220,150 @@
   renderDialogPanel(offers[0]);
 
   dialogCloseElement.addEventListener('click', dialogCloseClickHandler);
+
+  var timeIn = document.getElementById('timein');
+  var timeOut = document.getElementById('timeout');
+  var apartmentTypeSelect = document.getElementById('type');
+  var priceFormElement = document.getElementById('price');
+  var roomNumber = document.getElementById('room_number');
+  var capacityFormElement = document.getElementById('capacity');
+  var addressField = document.querySelector('#address');
+  var titleField = document.querySelector('#title');
+  var priceField = document.querySelector('#price');
+  var capacityOptionElements = capacityFormElement.querySelectorAll('option');
+  var noticeForm = document.querySelector('.notice__form');
+  var formSubmit = document.querySelector('.form__submit');
+
+  function setApartmentMinValue(apartment) {
+    switch (apartment.value) {
+      case 'bungalo':
+        priceFormElement.min = '0';
+        break;
+      case 'house':
+        priceFormElement.min = '5000';
+        break;
+      case 'flat':
+        priceFormElement.min = '1000';
+        break;
+      case 'palace':
+        priceFormElement.min = '10000';
+        break;
+    }
+  }
+
+  function timeSwitch(time, time2) {
+    switch (time['value']) {
+      case '12:00':
+        time2['value'] = '12:00';
+        break;
+      case '13:00':
+        time2['value'] = '13:00';
+        break;
+      case '14:00':
+        time2['value'] = '14:00';
+        break;
+    }
+  }
+
+  function roomCapacitySetter() {
+    capacityOptionElements[0].disabled = false;
+    capacityOptionElements[1].disabled = false;
+    capacityOptionElements[2].disabled = false;
+    capacityOptionElements[3].disabled = false;
+    switch (roomNumber.value) {
+      case '3':
+        capacityFormElement.value = '3';
+        capacityOptionElements[3].disabled = true;
+        break;
+      case '2':
+        capacityFormElement.value = '2';
+        capacityOptionElements[3].disabled = true;
+        capacityOptionElements[0].disabled = true;
+        break;
+      case '1':
+        capacityFormElement.value = '1';
+        capacityOptionElements[3].disabled = true;
+        capacityOptionElements[1].disabled = true;
+        capacityOptionElements[0].disabled = true;
+        break;
+      case '100':
+        capacityOptionElements[0].disabled = true;
+        capacityOptionElements[1].disabled = true;
+        capacityOptionElements[2].disabled = true;
+        capacityFormElement.value = '0';
+        break;
+    }
+  }
+  function validationChecking(field) {
+    var currentField = field;
+    if (!currentField.validity.valid) {
+      currentField.style.boxShadow = ERROR_OUTLINE;
+      if (currentField.validity.valueMissing) {
+        currentField.setCustomValidity('Обязательное поле!');
+      } else if (currentField.validity.tooShort || currentField.value.length < currentField.minLength) {
+        currentField.setCustomValidity('В названии должно быть не менее ' + currentField.minLength + ' символов');
+      } else if (currentField.validity.tooLong) {
+        currentField.setCustomValidity('Название должно содержать не более ' + currentField.maxLength + ' символов');
+      } else if (currentField.validity.rangeUnderflow) {
+        currentField.setCustomValidity('Минимальное значение поля ' + currentField.min + ' максимально значение ' + currentField.max);
+      } else {
+        currentField.setCustomValidity('');
+        currentField.style.boxShadow = '';
+      }
+    }
+  }
+
+  addressField.addEventListener('invalid', function () {
+    validationChecking(addressField);
+  });
+  addressField.addEventListener('change', function () {
+    validationChecking(addressField);
+  });
+  titleField.addEventListener('invalid', function () {
+    validationChecking(titleField);
+  });
+  priceField.addEventListener('invalid', function () {
+    validationChecking(priceField);
+  });
+  priceField.addEventListener('change', function () {
+    validationChecking(priceField);
+  });
+  titleField.addEventListener('input', function () {
+    validationChecking(titleField);
+  });
+  titleField.addEventListener('change', function () {
+    validationChecking(titleField);
+  });
+
+  timeIn.addEventListener('change', function () {
+    timeSwitch(timeIn, timeOut);
+  });
+
+  timeOut.addEventListener('change', function () {
+    timeSwitch(timeOut, timeIn);
+  });
+
+  apartmentTypeSelect.addEventListener('change', function () {
+    setApartmentMinValue(apartmentTypeSelect);
+  });
+
+  roomNumber.addEventListener('change', roomCapacitySetter);
+
+  formSubmit.addEventListener('click', function () {
+    var formFields = noticeForm.elements;
+    for (var i = 0; i < formFields.length; i++) {
+      formFields[i].style.boxShadow = '';
+      if (!formFields[i].validity.valid) {
+        formFields[i].style.border = ERROR_OUTLINE;
+        return;
+      }
+    }
+    noticeForm.submit();
+  });
+
+  noticeForm.addEventListener('submit', function (e) {
+    e.preventDefault();
+    noticeForm.reset();
+  });
 
 })();
