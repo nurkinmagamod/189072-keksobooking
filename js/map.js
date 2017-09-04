@@ -176,6 +176,9 @@
       pinImage.setAttribute('height', PIN_IMAGE_HEIGHT);
       pinWrapper.appendChild(pinImage);
       fragment.appendChild(pinWrapper);
+      if (i === 0) {
+        highlight(pinWrapper);
+      }
     }
     pinMapElement.appendChild(fragment);
   }
