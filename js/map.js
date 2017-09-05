@@ -230,7 +230,6 @@
   var addressField = document.querySelector('#address');
   var titleField = document.querySelector('#title');
   var priceField = document.querySelector('#price');
-  var capacityOptionElements = capacityFormElement.querySelectorAll('option');
   var noticeForm = document.querySelector('.notice__form');
   var formSubmit = document.querySelector('.form__submit');
 
@@ -252,109 +251,107 @@
   }
 
   function timeSwitch(time, time2) {
-    switch (time['value']) {
-      case '12:00':
-        time2['value'] = '12:00';
-        break;
-      case '13:00':
-        time2['value'] = '13:00';
-        break;
-      case '14:00':
-        time2['value'] = '14:00';
-        break;
-    }
+    time2.value = time.value;
   }
 
-  function roomCapacitySetter() {
-    capacityOptionElements[0].disabled = false;
-    capacityOptionElements[1].disabled = false;
-    capacityOptionElements[2].disabled = false;
-    capacityOptionElements[3].disabled = false;
-    switch (roomNumber.value) {
-      case '3':
-        capacityFormElement.value = '3';
-        capacityOptionElements[3].disabled = true;
-        break;
-      case '2':
-        capacityFormElement.value = '2';
-        capacityOptionElements[3].disabled = true;
-        capacityOptionElements[0].disabled = true;
-        break;
-      case '1':
-        capacityFormElement.value = '1';
-        capacityOptionElements[3].disabled = true;
-        capacityOptionElements[1].disabled = true;
-        capacityOptionElements[0].disabled = true;
-        break;
-      case '100':
-        capacityOptionElements[0].disabled = true;
-        capacityOptionElements[1].disabled = true;
-        capacityOptionElements[2].disabled = true;
-        capacityFormElement.value = '0';
-        break;
-    }
-  }
-  function validationChecking(field) {
-    var currentField = field;
-    if (!currentField.validity.valid) {
-      currentField.style.boxShadow = ERROR_OUTLINE;
-      if (currentField.validity.valueMissing) {
-        currentField.setCustomValidity('Обязательное поле!');
-      } else if (currentField.validity.tooShort || currentField.value.length < currentField.minLength) {
-        currentField.setCustomValidity('В названии должно быть не менее ' + currentField.minLength + ' символов');
-      } else if (currentField.validity.tooLong) {
-        currentField.setCustomValidity('Название должно содержать не более ' + currentField.maxLength + ' символов');
-      } else if (currentField.validity.rangeUnderflow) {
-        currentField.setCustomValidity('Минимальное значение поля ' + currentField.min + ' максимально значение ' + currentField.max);
+  function syncOptions() {
+    var roomsNumberOption = parseInt(roomNumber.value, 10);
+
+    for (var i = 0; i < capacityFormElement.children.length; i++) {
+      var option = capacityFormElement.children[i];
+      var guestNumberOption = parseInt(option.value, 10);
+
+
+      var isDisabled = false;
+      var isSelected = false;
+      if (roomsNumberOption < 100) {
+        isDisabled = guestNumberOption > roomsNumberOption || guestNumberOption === 0;
+        isSelected = guestNumberOption === roomsNumberOption;
       } else {
-        currentField.setCustomValidity('');
-        currentField.style.boxShadow = '';
+        isDisabled = guestNumberOption !== 0;
+        isSelected = !isDisabled;
+      }
+
+      if (isDisabled) {
+        option.setAttribute('disabled', '');
+      } else {
+        option.removeAttribute('disabled');
+      }
+
+      if (isSelected) {
+        option.setAttribute('selected', isSelected);
       }
     }
   }
 
+  function setInvalidField(input, massage) {
+    if (!input.validity.valid) {
+      input.style.border = ERROR_OUTLINE;
+      input.setCustomValidity(massage);
+    }
+  }
+  function clearInvalid(input) {
+    input.setCustomValidity('');
+    input.style.border = '';
+  }
+  function validateValuePresence(input) {
+    if (input.validity.valueMissing) {
+      setInvalidField(input, 'Это поле обязательно для заполнения !');
+    } else {
+      clearInvalid(input);
+    }
+  }
+  function validateTextLength(input) {
+    if (input.validity.tooLong) {
+      setInvalidField(input, 'Название должно содержать не более' + input.maxLength + ' символов');
+    } else if (input.validity.tooShort || input.value.length < input.minLength) {
+      setInvalidField(input, 'В названии должно быть не менее ' + input.minLength + ' символов');
+    } else {
+      clearInvalid(input);
+    }
+  }
+
+  function validateNumber(input) {
+    if (input.validity.rangeUnderflow) {
+      setInvalidField(input, 'Минимальное значение поля ' + input.min + ' максимально значение ' + input.max);
+    } else {
+      clearInvalid(input);
+    }
+  }
+
   addressField.addEventListener('invalid', function () {
-    validationChecking(addressField);
-  });
-  addressField.addEventListener('change', function () {
-    validationChecking(addressField);
-  });
-  titleField.addEventListener('invalid', function () {
-    validationChecking(titleField);
-  });
-  priceField.addEventListener('invalid', function () {
-    validationChecking(priceField);
-  });
-  priceField.addEventListener('change', function () {
-    validationChecking(priceField);
+    validateValuePresence(addressField);
   });
   titleField.addEventListener('input', function () {
-    validationChecking(titleField);
+    validateTextLength(titleField);
   });
-  titleField.addEventListener('change', function () {
-    validationChecking(titleField);
+  titleField.addEventListener('invalid', function () {
+    validateTextLength(titleField);
   });
-
+  priceField.addEventListener('invalid', function () {
+    validateNumber(priceField);
+  });
   timeIn.addEventListener('change', function () {
     timeSwitch(timeIn, timeOut);
   });
-
   timeOut.addEventListener('change', function () {
     timeSwitch(timeOut, timeIn);
   });
-
   apartmentTypeSelect.addEventListener('change', function () {
     setApartmentMinValue(apartmentTypeSelect);
   });
-
-  roomNumber.addEventListener('change', roomCapacitySetter);
+  priceFormElement.addEventListener('input', function () {
+    setApartmentMinValue(apartmentTypeSelect);
+  });
+  roomNumber.addEventListener('change', syncOptions);
 
   formSubmit.addEventListener('click', function () {
     var formFields = noticeForm.elements;
     for (var i = 0; i < formFields.length; i++) {
-      formFields[i].style.boxShadow = '';
-      if (!formFields[i].validity.valid) {
-        formFields[i].style.border = ERROR_OUTLINE;
+      var currentField = formFields[i];
+      currentField.style.border = '';
+      if (!currentField.validity.valid) {
+        currentField.style.border = ERROR_OUTLINE;
         return;
       }
     }
