@@ -10,7 +10,7 @@
 
   var dialogCloseElement = document.querySelector('.dialog__close');
   var offerDialog = document.getElementById('offer-dialog');
-  var selectedTd;
+
 
   function dialogCloseClickHandler() {
     window.dialogCloseAction();
@@ -21,7 +21,7 @@
 
   window.dialogCloseAction = function () {
     offerDialog.classList.add('hidden');
-    selectedTd.classList.remove('pin--active');
+    window.highlight();
     document.removeEventListener('keydown', window.dialogCloseKeyDownHandler);
   };
 

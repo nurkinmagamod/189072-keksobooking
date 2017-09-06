@@ -8,13 +8,13 @@
   };
   var selectedTd;
 
-  function highlight(node) {
+  window.highlight = function (node) {
     if (selectedTd) {
       selectedTd.classList.remove('pin--active');
     }
     selectedTd = node;
     selectedTd.classList.add('pin--active');
-  }
+  };
 
   window.renderPin = function (objToRend) {
     var pinMapElement = document.querySelector('.tokyo__pin-map');
@@ -40,7 +40,7 @@
       pinWrapper.appendChild(pinImage);
       fragment.appendChild(pinWrapper);
       if (i === 0) {
-        highlight(pinWrapper);
+        window.highlight(pinWrapper);
       }
     }
     pinMapElement.appendChild(fragment);
@@ -52,7 +52,7 @@
     if (evt.keyCode === window.KEY_CODES.ENTER) {
       window.renderDialogPanel(window.offers[pinDataID]);
       window.showDialog();
-      highlight(evt.target.parentNode);
+      window.highlight(evt.target.parentNode);
       document.addEventListener('keydown', window.dialogCloseKeyDownHandler);
     }
   }
@@ -65,7 +65,7 @@
     var pinMap = evt.target.tagName === 'DIV' ? evt.target : evt.target.parentNode;
     var pinDataID = pinMap.getAttribute('data-item');
 
-    highlight(pinMap);
+    window.highlight(pinMap);
     window.renderDialogPanel(window.offers[pinDataID]);
     addKeyDownListner();
     window.showDialog();
