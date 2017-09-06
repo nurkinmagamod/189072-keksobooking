@@ -33,7 +33,8 @@
 
   dialogCloseElement.addEventListener('click', dialogCloseClickHandler);
 
-  window.renderDialogPanel(window.createRandomOffers()[0]);
-  window.renderPin(window.createRandomOffers());
+  window.offers = window.createRandomOffers();
+  window.renderDialogPanel(window.offers[0]);
+  window.renderPin(window.offers);
 
 })();
