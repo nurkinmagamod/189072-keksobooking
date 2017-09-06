@@ -2,7 +2,7 @@
 (function () {
   var PIN_IMAGE_WIDTH = 40;
   var PIN_IMAGE_HEIGHT = 40;
-  var KEY_CODES = {
+  window.KEY_CODES = {
     ESC: 27,
     ENTER: 13
   };
@@ -49,16 +49,16 @@
   function pinKeyDownHandler(evt) {
     var pinDataID = event.target.parentNode.getAttribute('data-item');
 
-    if (evt.keyCode === KEY_CODES.ENTER) {
-      renderDialogPanel(offers[pinDataID]);
-      showDialog();
+    if (evt.keyCode === window.KEY_CODES.ENTER) {
+      window.renderDialogPanel(window.offers[pinDataID]);
+      window.showDialog();
       highlight(evt.target.parentNode);
-      document.addEventListener('keydown', dialogCloseKeyDownHandler);
+      document.addEventListener('keydown', window.dialogCloseKeyDownHandler);
     }
   }
 
   function addKeyDownListner() {
-    document.addEventListener('keydown', dialogCloseKeyDownHandler);
+    document.addEventListener('keydown', window.dialogCloseKeyDownHandler);
   }
 
   function pinClickHandler(evt) {
@@ -66,9 +66,9 @@
     var pinDataID = pinMap.getAttribute('data-item');
 
     highlight(pinMap);
-    renderDialogPanel(offers[pinDataID]);
+    window.renderDialogPanel(window.offers[pinDataID]);
     addKeyDownListner();
-    showDialog();
+    window.showDialog();
   }
 
 

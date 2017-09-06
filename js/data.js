@@ -30,19 +30,12 @@
     'conditioner'
   ];
 
-  var PIN_CONTAINER_WIDTH = 56;
-  var PIN_CONTAINER_HEIGHT = 75;
   var MIN_PRICE = 1000;
   var MAX_PRICE = 1000000;
   var MIN_NUMBER_OF_ROOMS = 1;
   var MAX_NUMBER_OF_ROOMS = 5;
   var MIN_NUMBER_OF_GUESTS = 1;
   var MAX_NUMBER_OF_GUESTS = 5;
-  var MIN_X_LOCATION = 300;
-  var MAX_X_LOCATION = 900;
-  var MIN_Y_LOCATION = 100;
-  var MAX_Y_LOCATION = 500;
-
 
   function randomInteger(min, max) {
     var rand = min - 0.5 + Math.random() * (max - min + 1);
@@ -58,12 +51,12 @@
     return arr.slice(0, randomInteger(1, APARTMENT_FEATURES.length));
   }
 
-  function createRandomOffers() {
+  window.createRandomOffers = function () {
     var objects = [];
 
     for (var i = 0; i < OFFER_TITLES.length; i++) {
-      var locationX = randomInteger(MIN_X_LOCATION, MAX_X_LOCATION) - PIN_CONTAINER_WIDTH / 2;
-      var locationY = randomInteger(MIN_Y_LOCATION, MAX_Y_LOCATION) - PIN_CONTAINER_HEIGHT;
+      var locationX = randomInteger(window.MIN_X_LOCATION, window.MAX_X_LOCATION) - window.PIN_CONTAINER_WIDTH / 2;
+      var locationY = randomInteger(window.MIN_Y_LOCATION, window.MAX_Y_LOCATION) - window.PIN_CONTAINER_HEIGHT;
       objects.push({
         author: {
           avatar: 'img/avatars/user0' + (i + 1) + '.png'
@@ -88,6 +81,5 @@
       });
     }
     return objects;
-  }
-  window.offers = createRandomOffers();
+  };
 })();
