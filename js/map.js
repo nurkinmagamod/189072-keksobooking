@@ -5,14 +5,16 @@
   window.MIN_Y_LOCATION = 100;
   window.MAX_X_LOCATION = 900;
   window.MAX_Y_LOCATION = 500;
+  window.PIN_CONTAINER_WIDTH = 56;
+  window.PIN_CONTAINER_HEIGHT = 75;
   var MAIN_PIN_MAX_X = 1162;
   var MAIN_PIN_MAX_Y = 568;
   var MAIN_PIN_MIN_Y = 73;
   var MAIN_PIN_MIN_X = -37;
-
+  var MAIN_PIN_HIEGHT = 94;
+  var MAIN_PIN_WIDHT = 74;
   var dialogCloseElement = document.querySelector('.dialog__close');
   var offerDialog = document.getElementById('offer-dialog');
-  var mainPin = document.querySelector('.pin__main');
 
   function getBoundedCoords(possibleX, possibleY) {
     var coords = {x: possibleX, y: possibleY};
@@ -49,9 +51,15 @@
       window.dialogCloseAction();
     }
   };
+  var addressFieldElement = document.getElementById('address');
+
+
+  var mainPin = document.querySelector('.pin__main');
+
 
   mainPin.addEventListener('mousedown', function (evt) {
     evt.preventDefault();
+
 
     var startCoords = {
       x: evt.clientX,
@@ -66,6 +74,18 @@
         y: startCoords.y - moveEvt.clientY
 
       };
+
+      function preventExternalMove(elem, minX, minY, maxX, maxY) {
+        if ((elem.offsetTop - shift.y) > maxY) {
+          elem.style.top = maxY + 'px';
+        } else if ((elem.offsetTop - shift.y) < minY) {
+          elem.style.top = minY + 'px';
+        } else if ((elem.offsetLeft - shift.x) < minX) {
+          elem.style.left = minX + 'px';
+        } else if ((elem.offsetLeft - shift.x) > maxX) {
+          elem.style.left = maxX + 'px';
+        }
+      }
 
       startCoords = {
         x: moveEvt.clientX,
@@ -87,7 +107,7 @@
 
       window.changeAddressField(pinAddressX, pinAddressY);
     };
-    var onMouseUp = function (upEvt) {
+    var onMouseUp = function (upEvt)	{
       upEvt.preventDefault();
 
       document.removeEventListener('mousemove', onMouseMove);
