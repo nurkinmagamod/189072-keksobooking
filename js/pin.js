@@ -1,5 +1,9 @@
 'use strict';
 (function () {
+  window.PIN_CONTAINER_WIDTH = 56;
+  window.PIN_CONTAINER_HEIGHT = 75;
+  window.MAIN_PIN_HIEGHT = 94;
+  window.MAIN_PIN_WIDHT = 74;
   var PIN_IMAGE_WIDTH = 40;
   var PIN_IMAGE_HEIGHT = 40;
   window.KEY_CODES = {
