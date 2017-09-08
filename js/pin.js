@@ -31,8 +31,8 @@
       pinWrapper.className = 'pin';
       pinImage.setAttribute('tabindex', 0);
       pinWrapper.setAttribute('data-item', i);
-      pinWrapper.style.left = currentObjToRend.location.x + 'px';
-      pinWrapper.style.top = currentObjToRend.location.y + 'px';
+      pinWrapper.style.left = currentObjToRend.location.x - window.PIN_CONTAINER_WIDTH / 2 + 'px';
+      pinWrapper.style.top = currentObjToRend.location.y - window.PIN_CONTAINER_HEIGHT + 'px';
       pinImage.className = 'rounded';
       pinImage.setAttribute('width', PIN_IMAGE_WIDTH);
       pinImage.setAttribute('src', objToRend[i].author.avatar);

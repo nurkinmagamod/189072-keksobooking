@@ -55,8 +55,8 @@
     var objects = [];
 
     for (var i = 0; i < OFFER_TITLES.length; i++) {
-      var locationX = randomInteger(window.MIN_X_LOCATION, window.MAX_X_LOCATION) - window.PIN_CONTAINER_WIDTH / 2;
-      var locationY = randomInteger(window.MIN_Y_LOCATION, window.MAX_Y_LOCATION) - window.PIN_CONTAINER_HEIGHT;
+      var locationX = randomInteger(window.MIN_X_LOCATION, window.MAX_X_LOCATION);
+      var locationY = randomInteger(window.MIN_Y_LOCATION, window.MAX_Y_LOCATION);
       objects.push({
         author: {
           avatar: 'img/avatars/user0' + (i + 1) + '.png'
