@@ -102,8 +102,8 @@
     }
   }
 
-  window.changeAddressField = function (elem) {
-    addressFieldElement.value = 'x: ' + (elem.offsetLeft + window.MAIN_PIN_WIDHT / 2) + ' y: ' + (elem.offsetTop + window.MAIN_PIN_HIEGHT);
+  window.changeAddressField = function (addressX, addressY) {
+    addressFieldElement.value = 'x: ' + addressX + ' y: ' + addressY;
   };
 
   addressField.addEventListener('invalid', function () {

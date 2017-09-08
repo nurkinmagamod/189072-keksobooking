@@ -14,25 +14,26 @@
   var offerDialog = document.getElementById('offer-dialog');
   var mainPin = document.querySelector('.pin__main');
 
-  function preventExternalMove(elem, position, minX, minY, maxX, maxY) {
-    elem.style.top = position.y + 'px';
-    elem.style.left = position.x + 'px';
+  function getBoundedCoords(possibleX, possibleY) {
+    var coords = {x: possibleX, y: possibleY};
 
-    if (elem.offsetTop > maxY) {
-      elem.style.top = maxY + 'px';
-    } else if (elem.offsetTop < minY) {
-      elem.style.top = minY + 'px';
+    if (possibleY > MAIN_PIN_MAX_Y) {
+      coords.y = MAIN_PIN_MAX_Y;
+    } else if (possibleY < MAIN_PIN_MIN_Y) {
+      coords.y = MAIN_PIN_MIN_Y;
     }
-    if (elem.offsetLeft < minX) {
-      elem.style.left = minX + 'px';
-    } else if (elem.offsetLeft > maxX) {
-      elem.style.left = maxX + 'px';
+    if (possibleX > MAIN_PIN_MAX_X) {
+      coords.x = MAIN_PIN_MAX_X;
+    } else if (possibleX < MAIN_PIN_MIN_X) {
+      coords.x = MAIN_PIN_MIN_X;
     }
+    return coords;
   }
 
   function dialogCloseClickHandler() {
     window.dialogCloseAction();
   }
+
   window.showDialog = function () {
     offerDialog.classList.remove('hidden');
   };
@@ -71,13 +72,20 @@
         y: moveEvt.clientY
       };
 
-      var pinPosition = {
+      var newPinPosition = {
         x: (mainPin.offsetLeft - shift.x),
         y: (mainPin.offsetTop - shift.y)
       };
 
-      preventExternalMove(mainPin, pinPosition, MAIN_PIN_MIN_X, MAIN_PIN_MIN_Y, MAIN_PIN_MAX_X, MAIN_PIN_MAX_Y);
-      window.changeAddressField(mainPin);
+      var coords = getBoundedCoords(newPinPosition.x, newPinPosition.y);
+
+      mainPin.style.top = coords.y + 'px';
+      mainPin.style.left = coords.x + 'px';
+
+      var pinAddressX = coords.x + window.MAIN_PIN_WIDTH / 2;
+      var pinAddressY = coords.y + window.MAIN_PIN_HIEGHT;
+
+      window.changeAddressField(pinAddressX, pinAddressY);
     };
     var onMouseUp = function (upEvt) {
       upEvt.preventDefault();
