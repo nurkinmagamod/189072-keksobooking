@@ -14,7 +14,7 @@
   var priceField = document.querySelector('#price');
   var noticeForm = document.querySelector('.notice__form');
   var formSubmit = document.querySelector('.form__submit');
-
+  var addressFieldElement = document.getElementById('address');
 
   function setApartmentMinValue(apartment) {
     switch (apartment.value) {
