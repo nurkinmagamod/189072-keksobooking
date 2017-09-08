@@ -102,6 +102,10 @@
     }
   }
 
+  window.changeAddressField = function (addressX, addressY) {
+    addressFieldElement.value = 'x: ' + addressX + ' y: ' + addressY;
+  };
+
   addressField.addEventListener('invalid', function () {
     validateValuePresence(addressField);
   });

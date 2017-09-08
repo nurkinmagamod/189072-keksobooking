@@ -16,10 +16,26 @@
   var dialogCloseElement = document.querySelector('.dialog__close');
   var offerDialog = document.getElementById('offer-dialog');
 
+  function getBoundedCoords(possibleX, possibleY) {
+    var coords = {x: possibleX, y: possibleY};
+
+    if (possibleY > MAIN_PIN_MAX_Y) {
+      coords.y = MAIN_PIN_MAX_Y;
+    } else if (possibleY < MAIN_PIN_MIN_Y) {
+      coords.y = MAIN_PIN_MIN_Y;
+    }
+    if (possibleX > MAIN_PIN_MAX_X) {
+      coords.x = MAIN_PIN_MAX_X;
+    } else if (possibleX < MAIN_PIN_MIN_X) {
+      coords.x = MAIN_PIN_MIN_X;
+    }
+    return coords;
+  }
 
   function dialogCloseClickHandler() {
     window.dialogCloseAction();
   }
+
   window.showDialog = function () {
     offerDialog.classList.remove('hidden');
   };
@@ -76,11 +92,20 @@
         y: moveEvt.clientY
       };
 
-      mainPin.style.top = (mainPin.offsetTop - shift.y) + 'px';
-      mainPin.style.left = (mainPin.offsetLeft - shift.x) + 'px';
+      var newPinPosition = {
+        x: (mainPin.offsetLeft - shift.x),
+        y: (mainPin.offsetTop - shift.y)
+      };
 
-      preventExternalMove(mainPin, MAIN_PIN_MIN_X, MAIN_PIN_MIN_Y, MAIN_PIN_MAX_X, MAIN_PIN_MAX_Y);
-      addressFieldElement.value = 'x: ' + (mainPin.offsetLeft - shift.x + MAIN_PIN_WIDHT / 2) + ' y: ' + (mainPin.offsetTop - shift.y + MAIN_PIN_HIEGHT);
+      var coords = getBoundedCoords(newPinPosition.x, newPinPosition.y);
+
+      mainPin.style.top = coords.y + 'px';
+      mainPin.style.left = coords.x + 'px';
+
+      var pinAddressX = coords.x + window.MAIN_PIN_WIDTH / 2;
+      var pinAddressY = coords.y + window.MAIN_PIN_HIEGHT;
+
+      window.changeAddressField(pinAddressX, pinAddressY);
     };
     var onMouseUp = function (upEvt)	{
       upEvt.preventDefault();
