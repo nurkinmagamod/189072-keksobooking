@@ -29,28 +29,15 @@
   };
   var syncValueWithOptions = function (element, list) {
     var optionsArr = [].slice.apply(element.querySelectorAll('option'));
-    optionsArr.forEach(function (item, index) {
-      if (list[0] === 0 && index === 3) {
-        item.disabled = false;
-        item.selected = true;
+    optionsArr.forEach(function (item) {
+      var listPosition = list.indexOf(parseInt(item.value, 10));
+      if (listPosition === -1) {
+        item.disabled = true;
         return;
-      }
-      if (list[0] === 1 && index === 2) {
-        item.disabled = false;
+      } else if (listPosition === 0) {
         item.selected = true;
-        return;
       }
-      if (list.length === 2 && (index === 2 || index === 1)) {
-        item.disabled = false;
-        item.selected = true;
-        return;
-      }
-      if (list.length === 3 && (index === 0 || index === 1 || index === 2)) {
-        item.disabled = false;
-        item.selected = true;
-        return;
-      }
-      item.disabled = true;
+      item.disabled = false;
     });
   };
 
