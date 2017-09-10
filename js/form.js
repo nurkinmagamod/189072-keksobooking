@@ -6,7 +6,12 @@
   var APARTMENT_TYPE_VALUES = ['bungalo', 'flat', 'house', 'palace'];
   var APARTMENT_COST_MIN_VALUES = ['0', '1000', '5000', '10000'];
   var ROOM_NUMBER_VALUES = ['100', '1', '2', '3'];
-  var ROOM_CAPACITIES = [[0], [1], [1, 2], [1, 2, 3]];
+  var ROOM_CAPACITIES = [
+    [0],
+    [1],
+    [2, 1],
+    [3, 2, 1]
+  ];
 
   var timeIn = document.getElementById('timein');
   var timeOut = document.getElementById('timeout');
