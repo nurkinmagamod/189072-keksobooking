@@ -5,13 +5,8 @@
   var TIME_IN_OUT = ['12:00', '13:00', '14:00'];
   var APARTMENT_TYPE_VALUES = ['bungalo', 'flat', 'house', 'palace'];
   var APARTMENT_COST_MIN_VALUES = ['0', '1000', '5000', '10000'];
-  var ROOM_NUMBER_VALUES = ['100', '1', '2', '3'];
-  var ROOM_CAPACITIES = [
-    [0],
-    [1],
-    [2, 1],
-    [3, 2, 1]
-  ];
+  var ROOM_NUMBER_VALUES = ['1', '2', '3', '100'];
+  var ROOM_CAPACITIES = [['1'], ['2', '1'], ['3', '2', '1'], ['0']];
 
   var timeIn = document.getElementById('timein');
   var timeOut = document.getElementById('timeout');
@@ -32,17 +27,18 @@
   var syncValueWithMin = function (element, value) {
     element.min = value;
   };
-  var syncValueWithOptions = function (element, list) {
-    var optionsArr = [].slice.apply(element.querySelectorAll('option'));
-    optionsArr.forEach(function (item) {
-      var listPosition = list.indexOf(parseInt(item.value, 10));
-      if (listPosition === -1) {
-        item.disabled = true;
-        return;
-      } else if (listPosition === 0) {
-        item.selected = true;
+  var syncValueWithOptions = function (element, enabledOptions) {
+    var options = [].slice.call(element.querySelectorAll('option'));
+    options.forEach(function (option) {
+      var optionValueIdx = enabledOptions.indexOf(option.value);
+      if (optionValueIdx > -1) {
+        option.disabled = false;
+        if (optionValueIdx === 0) {
+          option.selected = true;
+        }
+      } else {
+        option.disabled = true;
       }
-      item.disabled = false;
     });
   };
 
@@ -100,18 +96,11 @@
   priceField.addEventListener('invalid', function () {
     validateNumber(priceField);
   });
-  timeIn.addEventListener('change', function () {
-    window.synchronizeFields(timeIn, timeOut, TIME_IN_OUT, TIME_IN_OUT, syncValues);
-  });
-  timeOut.addEventListener('change', function () {
-    window.synchronizeFields(timeOut, timeIn, TIME_IN_OUT, TIME_IN_OUT, syncValues);
-  });
-  apartmentTypeSelect.addEventListener('change', function () {
-    window.synchronizeFields(apartmentTypeSelect, priceFormElement, APARTMENT_TYPE_VALUES, APARTMENT_COST_MIN_VALUES, syncValueWithMin);
-  });
-  roomNumber.addEventListener('change', function () {
-    window.synchronizeFields(roomNumber, capacityFormElement, ROOM_NUMBER_VALUES, ROOM_CAPACITIES, syncValueWithOptions);
-  });
+
+  window.synchronizeFields(timeIn, timeOut, TIME_IN_OUT, TIME_IN_OUT, syncValues);
+  window.synchronizeFields(timeOut, timeIn, TIME_IN_OUT, TIME_IN_OUT, syncValues);
+  window.synchronizeFields(apartmentTypeSelect, priceFormElement, APARTMENT_TYPE_VALUES, APARTMENT_COST_MIN_VALUES, syncValueWithMin);
+  window.synchronizeFields(roomNumber, capacityFormElement, ROOM_NUMBER_VALUES, ROOM_CAPACITIES, syncValueWithOptions);
 
   formSubmit.addEventListener('click', function () {
     var formFields = noticeForm.elements;
