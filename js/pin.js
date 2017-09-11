@@ -51,10 +51,8 @@
   };
 
   function pinKeyDownHandler(evt) {
-    var pinDataID = event.target.parentNode.getAttribute('data-item');
-
     if (evt.keyCode === window.KEY_CODES.ENTER) {
-      window.renderDialogPanel(window.offers[pinDataID]);
+      window.showCard(window.offers);
       window.showDialog();
       window.highlight(evt.target.parentNode);
       document.addEventListener('keydown', window.dialogCloseKeyDownHandler);
@@ -67,13 +65,10 @@
 
   function pinClickHandler(evt) {
     var pinMap = evt.target.tagName === 'DIV' ? evt.target : evt.target.parentNode;
-    var pinDataID = pinMap.getAttribute('data-item');
-
     window.highlight(pinMap);
-    window.renderDialogPanel(window.offers[pinDataID]);
+    window.showCard(window.offers);
     addKeyDownListner();
     window.showDialog();
   }
-
 
 })();

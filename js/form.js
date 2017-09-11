@@ -2,6 +2,16 @@
 
 (function () {
   var ERROR_OUTLINE = '2px solid red';
+  var TIME_IN_OUT = ['12:00', '13:00', '14:00'];
+  var APARTMENT_TYPE_VALUES = ['bungalo', 'flat', 'house', 'palace'];
+  var APARTMENT_COST_MIN_VALUES = ['0', '1000', '5000', '10000'];
+  var ROOM_NUMBER_VALUES = ['100', '1', '2', '3'];
+  var ROOM_CAPACITIES = [
+    [0],
+    [1],
+    [2, 1],
+    [3, 2, 1]
+  ];
 
   var timeIn = document.getElementById('timein');
   var timeOut = document.getElementById('timeout');
@@ -16,53 +26,25 @@
   var formSubmit = document.querySelector('.form__submit');
   var addressFieldElement = document.getElementById('address');
 
-  function setApartmentMinValue(apartment) {
-    switch (apartment.value) {
-      case 'bungalo':
-        priceFormElement.min = '0';
-        break;
-      case 'house':
-        priceFormElement.min = '5000';
-        break;
-      case 'flat':
-        priceFormElement.min = '1000';
-        break;
-      case 'palace':
-        priceFormElement.min = '10000';
-        break;
-    }
-  }
-
-  function timeSwitch(time, time2) {
-    time2.value = time.value;
-  }
-
-  function syncOptions() {
-    var roomsNumberOption = parseInt(roomNumber.value, 10);
-
-    for (var i = 0; i < capacityFormElement.children.length; i++) {
-      var option = capacityFormElement.children[i];
-      var guestNumberOption = parseInt(option.value, 10);
-
-      var isDisabled = false;
-      var isSelected = false;
-      if (roomsNumberOption < 100) {
-        isDisabled = guestNumberOption > roomsNumberOption || guestNumberOption === 0;
-        isSelected = guestNumberOption === roomsNumberOption;
-      } else {
-        isDisabled = guestNumberOption !== 0;
-        isSelected = !isDisabled;
+  var syncValues = function (element, value) {
+    element.value = value;
+  };
+  var syncValueWithMin = function (element, value) {
+    element.min = value;
+  };
+  var syncValueWithOptions = function (element, list) {
+    var optionsArr = [].slice.apply(element.querySelectorAll('option'));
+    optionsArr.forEach(function (item) {
+      var listPosition = list.indexOf(parseInt(item.value, 10));
+      if (listPosition === -1) {
+        item.disabled = true;
+        return;
+      } else if (listPosition === 0) {
+        item.selected = true;
       }
-      if (isDisabled) {
-        option.setAttribute('disabled', '');
-      } else {
-        option.removeAttribute('disabled');
-      }
-      if (isSelected) {
-        option.setAttribute('selected', isSelected);
-      }
-    }
-  }
+      item.disabled = false;
+    });
+  };
 
   function setInvalidField(input, massage) {
     if (!input.validity.valid) {
@@ -119,18 +101,17 @@
     validateNumber(priceField);
   });
   timeIn.addEventListener('change', function () {
-    timeSwitch(timeIn, timeOut);
+    window.synchronizeFields(timeIn, timeOut, TIME_IN_OUT, TIME_IN_OUT, syncValues);
   });
   timeOut.addEventListener('change', function () {
-    timeSwitch(timeOut, timeIn);
+    window.synchronizeFields(timeOut, timeIn, TIME_IN_OUT, TIME_IN_OUT, syncValues);
   });
   apartmentTypeSelect.addEventListener('change', function () {
-    setApartmentMinValue(apartmentTypeSelect);
+    window.synchronizeFields(apartmentTypeSelect, priceFormElement, APARTMENT_TYPE_VALUES, APARTMENT_COST_MIN_VALUES, syncValueWithMin);
   });
-  priceFormElement.addEventListener('input', function () {
-    setApartmentMinValue(apartmentTypeSelect);
+  roomNumber.addEventListener('change', function () {
+    window.synchronizeFields(roomNumber, capacityFormElement, ROOM_NUMBER_VALUES, ROOM_CAPACITIES, syncValueWithOptions);
   });
-  roomNumber.addEventListener('change', syncOptions);
 
   formSubmit.addEventListener('click', function () {
     var formFields = noticeForm.elements;
