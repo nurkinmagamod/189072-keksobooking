@@ -126,8 +126,11 @@
     noticeForm.submit();
   });
 
-  noticeForm.addEventListener('submit', function (e) {
-    e.preventDefault();
+  var formClear = function () {
     noticeForm.reset();
+  };
+  noticeForm.addEventListener('submit', function (e) {
+    window.backend.save(new FormData(noticeForm), formClear, window.errorHandler);
+    e.preventDefault();
   });
 })();

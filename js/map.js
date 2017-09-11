@@ -99,8 +99,9 @@
 
   dialogCloseElement.addEventListener('click', dialogCloseClickHandler);
 
-  window.offers = window.createRandomOffers();
-  window.renderDialogPanel(window.offers[0]);
-  window.renderPin(window.offers);
-
+  window.backend.load(function (data) {
+    window.dataFromServer = data;
+    window.renderDialogPanel(window.dataFromServer[0]);
+    window.renderPin(window.dataFromServer);
+  }, window.errorHandler);
 })();
