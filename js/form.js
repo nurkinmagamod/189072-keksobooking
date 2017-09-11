@@ -18,7 +18,6 @@
   var titleField = document.querySelector('#title');
   var priceField = document.querySelector('#price');
   var noticeForm = document.querySelector('.notice__form');
-  var formSubmit = document.querySelector('.form__submit');
   var addressFieldElement = document.getElementById('address');
 
   var syncValues = function (element, value) {
@@ -102,7 +101,11 @@
   window.synchronizeFields(apartmentTypeSelect, priceFormElement, APARTMENT_TYPE_VALUES, APARTMENT_COST_MIN_VALUES, syncValueWithMin);
   window.synchronizeFields(roomNumber, capacityFormElement, ROOM_NUMBER_VALUES, ROOM_CAPACITIES, syncValueWithOptions);
 
-  formSubmit.addEventListener('click', function () {
+  var formClear = function () {
+    noticeForm.reset();
+  };
+  noticeForm.addEventListener('submit', function (e) {
+    e.preventDefault();
     var formFields = noticeForm.elements;
     for (var i = 0; i < formFields.length; i++) {
       var currentField = formFields[i];
@@ -113,13 +116,6 @@
       }
     }
     noticeForm.submit();
-  });
-
-  var formClear = function () {
-    noticeForm.reset();
-  };
-  noticeForm.addEventListener('submit', function (e) {
-    window.backend.save(new FormData(noticeForm), formClear, window.errorHandler);
-    e.preventDefault();
+    window.backend.save(new FormData(noticeForm), formClear, window.showErrorMessage);
   });
 })();

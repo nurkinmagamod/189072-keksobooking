@@ -1,8 +1,7 @@
 'use strict';
 
 (function () {
-  var GET_URL = 'https://1510.dump.academy/keksobooking/data';
-  var POST_URL = 'https://1510.dump.academy/keksobooking';
+  var URL = 'https://1510.dump.academy/keksobooking';
 
   var setup = function (onSuccess, onError) {
     var xhr = new XMLHttpRequest();
@@ -30,29 +29,15 @@
     save: function (data, onSuccess, onError) {
       var xhr = setup(onSuccess, onError);
 
-      xhr.open('POST', POST_URL);
+      xhr.open('POST', URL);
       xhr.send(data);
     },
     load: function (onSuccess, onError) {
       var xhr = setup(onSuccess, onError);
 
-      xhr.open('GET', GET_URL);
+      xhr.open('GET', URL + '/data');
       xhr.send();
     }
 
   };
-
-  window.errorHandler = function (errorMessage) {
-    var node = document.createElement('div');
-    node.style = 'z-index: 100; margin: 0 auto; text-align: center; background-color: red; width:33%;';
-    node.style.position = 'absolute';
-    node.style.left = 0;
-    node.style.right = 0;
-    node.style.top = '200px';
-    node.style.fontSize = '30px';
-
-    node.textContent = errorMessage;
-    document.body.insertAdjacentElement('afterbegin', node);
-  };
-
 })();

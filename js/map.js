@@ -97,11 +97,24 @@
     document.addEventListener('mouseup', onMouseUp);
   });
 
+  window.showErrorMessage = function (errorMessage) {
+    var node = document.createElement('div');
+    node.style = 'z-index: 100; margin: 0 auto; text-align: center; background-color: red; width:33%;';
+    node.style.position = 'absolute';
+    node.style.left = 0;
+    node.style.right = 0;
+    node.style.top = '200px';
+    node.style.fontSize = '30px';
+
+    node.textContent = errorMessage;
+    document.body.insertAdjacentElement('afterbegin', node);
+  };
+
   dialogCloseElement.addEventListener('click', dialogCloseClickHandler);
 
   window.backend.load(function (data) {
     window.dataFromServer = data;
     window.renderDialogPanel(window.dataFromServer[0]);
     window.renderPin(window.dataFromServer);
-  }, window.errorHandler);
+  }, window.showErrorMessage);
 })();
