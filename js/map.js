@@ -59,7 +59,7 @@
     };
     var onMouseMove = function (moveEvt) {
       moveEvt.preventDefault();
-      mainPin.style.zIndex = 999;
+      mainPin.style.zIndex = 998;
 
       var shift = {
         x: startCoords.x - moveEvt.clientX,
@@ -97,10 +97,35 @@
     document.addEventListener('mouseup', onMouseUp);
   });
 
+  window.showMessage = function (bgColor, errorMessage) {
+    var node = document.createElement('div');
+    node.style.zIndex = 999;
+    node.style.backgroundColor = bgColor;
+    node.style.textAlign = 'center';
+    node.style.width = 100 + '%';
+    node.style.margin = '0 auto';
+    node.style.position = 'fixed';
+    node.style.left = 0;
+    node.style.right = 0;
+    node.style.top = 0;
+    node.style.fontSize = '30px';
+
+    node.textContent = errorMessage;
+    document.body.insertAdjacentElement('afterbegin', node);
+    setTimeout(function () {
+      node.remove();
+    }, 3000);
+  };
+
+  function onDataLoadError(msg) {
+    window.showMessage('red', msg);
+  }
+
   dialogCloseElement.addEventListener('click', dialogCloseClickHandler);
 
-  window.offers = window.createRandomOffers();
-  window.renderDialogPanel(window.offers[0]);
-  window.renderPin(window.offers);
-
+  window.backend.load(function (data) {
+    window.dataFromServer = data;
+    window.renderDialogPanel(window.dataFromServer[0]);
+    window.renderPin(window.dataFromServer);
+  }, onDataLoadError);
 })();
