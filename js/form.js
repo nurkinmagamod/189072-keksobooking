@@ -115,6 +115,11 @@
         return;
       }
     }
-    window.backend.save(new FormData(noticeForm), formClear, window.showErrorMessage);
+    window.backend.save(
+        new FormData(noticeForm),
+        function () {
+          window.showMessage('green', 'Форма успешно отправлена');
+          formClear();
+        }, window.showMessage);
   });
 })();

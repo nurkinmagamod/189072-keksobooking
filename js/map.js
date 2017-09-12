@@ -97,21 +97,24 @@
     document.addEventListener('mouseup', onMouseUp);
   });
 
-  window.showErrorMessage = function (errorMessage) {
+  window.showMessage = function (bgColor, errorMessage) {
     var node = document.createElement('div');
     node.style.zIndex = 999;
-    node.style.backgroundColor = 'red';
+    node.style.backgroundColor = bgColor;
     node.style.textAlign = 'center';
     node.style.width = 100 + '%';
     node.style.margin = '0 auto';
-    node.style.position = 'absolute';
+    node.style.position = 'fixed';
     node.style.left = 0;
     node.style.right = 0;
-    node.style.top = 30 + '%';
+    node.style.top = 0;
     node.style.fontSize = '30px';
 
     node.textContent = errorMessage;
     document.body.insertAdjacentElement('afterbegin', node);
+    setTimeout(function () {
+      node.remove();
+    }, 3000);
   };
 
   dialogCloseElement.addEventListener('click', dialogCloseClickHandler);
@@ -120,5 +123,5 @@
     window.dataFromServer = data;
     window.renderDialogPanel(window.dataFromServer[0]);
     window.renderPin(window.dataFromServer);
-  }, window.showErrorMessage);
+  }, window.showMessage);
 })();
