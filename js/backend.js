@@ -11,14 +11,14 @@
       if (xhr.status === 200) {
         onSuccess(xhr.response);
       } else {
-        onError('red', 'Ошибка:' + xhr.status + ' ' + xhr.statusText);
+        onError('Ошибка:' + xhr.status + ' ' + xhr.statusText);
       }
     });
     xhr.addEventListener('error', function () {
-      onError('red', 'Произошла ошибка соединения');
+      onError('Произошла ошибка соединения');
     });
     xhr.addEventListener('timeout', function () {
-      onError('red', 'Запрос не успел выполниться за ' + xhr.timeout + 'мс');
+      onError('Запрос не успел выполниться за ' + xhr.timeout + 'мс');
     });
 
     xhr.timeout = 10000;

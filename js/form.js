@@ -101,9 +101,14 @@
   window.synchronizeFields(apartmentTypeSelect, priceFormElement, APARTMENT_TYPE_VALUES, APARTMENT_COST_MIN_VALUES, syncValueWithMin);
   window.synchronizeFields(roomNumber, capacityFormElement, ROOM_NUMBER_VALUES, ROOM_CAPACITIES, syncValueWithOptions);
 
-  var formClear = function () {
+  function onSubmitSuccess() {
+    window.showMessage('green', 'Данные успешно сохранены');
     noticeForm.reset();
-  };
+  }
+  function onSubmitError(msg) {
+    window.showMessage('red', msg);
+  }
+
   noticeForm.addEventListener('submit', function (e) {
     e.preventDefault();
     var formFields = noticeForm.elements;
@@ -115,11 +120,10 @@
         return;
       }
     }
+
     window.backend.save(
         new FormData(noticeForm),
-        function () {
-          window.showMessage('green', 'Форма успешно отправлена');
-          formClear();
-        }, window.showMessage);
+        onSubmitSuccess,
+        onSubmitError);
   });
 })();

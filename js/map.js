@@ -117,11 +117,15 @@
     }, 3000);
   };
 
+  function onDataLoadError(msg) {
+    window.showMessage('red', msg);
+  }
+
   dialogCloseElement.addEventListener('click', dialogCloseClickHandler);
 
   window.backend.load(function (data) {
     window.dataFromServer = data;
     window.renderDialogPanel(window.dataFromServer[0]);
     window.renderPin(window.dataFromServer);
-  }, window.showMessage);
+  }, onDataLoadError);
 })();
