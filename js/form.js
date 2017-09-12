@@ -115,7 +115,6 @@
         return;
       }
     }
-    noticeForm.submit();
     window.backend.save(new FormData(noticeForm), formClear, window.showErrorMessage);
   });
 })();

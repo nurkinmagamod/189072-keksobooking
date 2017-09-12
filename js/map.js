@@ -59,7 +59,7 @@
     };
     var onMouseMove = function (moveEvt) {
       moveEvt.preventDefault();
-      mainPin.style.zIndex = 999;
+      mainPin.style.zIndex = 998;
 
       var shift = {
         x: startCoords.x - moveEvt.clientX,
@@ -99,7 +99,11 @@
 
   window.showErrorMessage = function (errorMessage) {
     var node = document.createElement('div');
-    node.style = 'z-index: 100; margin: 0 auto; text-align: center; background-color: red; width:33%;';
+    node.style = 'z-index: 999';
+    node.style = 'margin: 0 auto';
+    node.style = 'text-align: center';
+    node.style = 'background-color: red';
+    node.style = 'width:33%';
     node.style.position = 'absolute';
     node.style.left = 0;
     node.style.right = 0;

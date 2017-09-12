@@ -11,11 +11,11 @@
       if (xhr.status === 200) {
         onSuccess(xhr.response);
       } else {
-        onError(xhr.response);
+        onError('Ошибка:' + xhr.status + ' ' + xhr.statusText);
       }
     });
     xhr.addEventListener('error', function () {
-      onError('Произошла ошибка соединения');
+      onError('Произошла ошибка соединения:');
     });
     xhr.addEventListener('timeout', function () {
       onError('Запрос не успел выполниться за ' + xhr.timeout + 'мс');
