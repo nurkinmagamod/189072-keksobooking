@@ -99,15 +99,15 @@
 
   window.showErrorMessage = function (errorMessage) {
     var node = document.createElement('div');
-    node.style = 'z-index: 999';
-    node.style = 'margin: 0 auto';
-    node.style = 'text-align: center';
-    node.style = 'background-color: red';
-    node.style = 'width:33%';
+    node.style.zIndex = 999;
+    node.style.backgroundColor = 'red';
+    node.style.textAlign = 'center';
+    node.style.width = 100 + '%';
+    node.style.margin = '0 auto';
     node.style.position = 'absolute';
     node.style.left = 0;
     node.style.right = 0;
-    node.style.top = '200px';
+    node.style.top = 30 + '%';
     node.style.fontSize = '30px';
 
     node.textContent = errorMessage;
