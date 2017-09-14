@@ -10,7 +10,9 @@
     ESC: 27,
     ENTER: 13
   };
+  var pinElementsDestructors = [];
   var selectedTd;
+  var nearbyAdsList = document.querySelector('.tokyo__pin-map');
 
   window.highlight = function (node) {
     if (selectedTd) {
@@ -26,6 +28,11 @@
 
     pinMapElement.addEventListener('click', pinClickHandler);
     pinMapElement.addEventListener('keydown', pinKeyDownHandler);
+
+    pinElementsDestructors.push(function () {
+      pinMapElement.removeEventListener('click', pinClickHandler);
+      pinMapElement.removeEventListener('keydown', pinKeyDownHandler);
+    });
 
     for (var i = 0; i < objToRend.length; i++) {
       var currentObjToRend = objToRend[i];
@@ -66,9 +73,21 @@
   function pinClickHandler(evt) {
     var pinMap = evt.target.tagName === 'DIV' ? evt.target : evt.target.parentNode;
     window.highlight(pinMap);
-    window.showCard(window.filteredData);
+    window.showCard(window.getFilteredData());
     addKeyDownListner();
     window.showDialog();
   }
 
+  window.removePins = function () {
+    var pins = nearbyAdsList.querySelectorAll('.pin');
+    pins.forEach(function (elem) {
+      if (!elem.classList.contains('pin__main')) {
+        elem.remove();
+      }
+    });
+    while (pinElementsDestructors.length > 0) {
+      var destructor = pinElementsDestructors.shift();
+      destructor();
+    }
+  };
 })();

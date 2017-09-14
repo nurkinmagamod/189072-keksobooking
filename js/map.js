@@ -122,10 +122,7 @@
   }
 
   dialogCloseElement.addEventListener('click', dialogCloseClickHandler);
-
-  window.backend.load(function (data) {
-    var offers = data;
-    window.renderPin(offers);
-    window.renderDialogPanel(offers[0]);
+  window.backend.load(function () {
+    window.setServerData();
   }, onDataLoadError);
 })();
