@@ -122,7 +122,7 @@
   }
 
   dialogCloseElement.addEventListener('click', dialogCloseClickHandler);
-  window.backend.load(function () {
-    window.setServerData();
+  window.backend.load(function (data) {
+    window.setServerData(data);
   }, onDataLoadError);
 })();

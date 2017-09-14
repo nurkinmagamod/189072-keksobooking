@@ -1,7 +1,7 @@
 'use strict';
 
 (function () {
-
+  var filteredData;
   var dataFromServer = [];
   var filters = document.querySelectorAll('.tokyo__filter');
   var filtersForm = document.querySelector('.tokyo__filters');
@@ -62,13 +62,18 @@
 
   var filteringMethodsArray = [filterOffersByType, filterOffersByRoomCapacity, filterOffersByPrice, filerOffersByGuestsNumber, filtersByFeatures];
 
-  window.setServerData = function () {
+  window.setServerData = function (serverData) {
+    dataFromServer = serverData;
     updateAfterFiltering();
-    return dataFromServer;
   };
 
-  var filteredData = '';
-  window.getFilteredData = function () {
+
+  var updateAfterFiltering = function () {
+
+    window.getFilteredData = function () {
+      filteredData = !filteredData ? newFilteredData.slice(0, 3) : newFilteredData;
+      return filteredData;
+    };
 
     var newFilteredData = dataFromServer.filter(function (elem) {
       for (var i = 0; i < filteringMethodsArray.length; i++) {
@@ -79,15 +84,6 @@
       }
       return true;
     });
-    if (!filteredData) {
-      filteredData = newFilteredData.slice(0, 3);
-    } else {
-      filteredData = newFilteredData;
-    }
-    return filteredData;
-  };
-
-  var updateAfterFiltering = function () {
     window.removePins();
     window.getFilteredData();
     window.renderPin(filteredData);
