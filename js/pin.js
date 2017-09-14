@@ -66,7 +66,7 @@
   function pinClickHandler(evt) {
     var pinMap = evt.target.tagName === 'DIV' ? evt.target : evt.target.parentNode;
     window.highlight(pinMap);
-    window.showCard(window.dataFromServer);
+    window.showCard(window.filteredData);
     addKeyDownListner();
     window.showDialog();
   }

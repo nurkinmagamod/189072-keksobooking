@@ -124,8 +124,8 @@
   dialogCloseElement.addEventListener('click', dialogCloseClickHandler);
 
   window.backend.load(function (data) {
-    window.dataFromServer = data;
-    window.renderDialogPanel(window.dataFromServer[0]);
-    window.renderPin(window.dataFromServer);
+    var offers = data;
+    window.renderPin(offers);
+    window.renderDialogPanel(offers[0]);
   }, onDataLoadError);
 })();
