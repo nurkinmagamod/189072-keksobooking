@@ -80,6 +80,7 @@
   }
 
   window.changeAddressField = function (addressX, addressY) {
+    addressFieldElement.style.border = '';
     addressFieldElement.value = 'x: ' + addressX + ' y: ' + addressY;
   };
 

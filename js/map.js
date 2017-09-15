@@ -61,7 +61,6 @@
     var onMouseMove = function (moveEvt) {
       moveEvt.preventDefault();
       mainPin.style.zIndex = 998;
-      addressFieldElement.style.border = '';
 
       var shift = {
         x: startCoords.x - moveEvt.clientX,
