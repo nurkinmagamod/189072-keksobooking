@@ -31,14 +31,14 @@
   }
 
   function dialogCloseClickHandler() {
-    window.dialogCloseAction();
+    window.closeDialog();
   }
 
   window.showDialog = function () {
     offerDialog.classList.remove('hidden');
   };
 
-  window.dialogCloseAction = function () {
+  window.closeDialog = function () {
     offerDialog.classList.add('hidden');
     window.highlight();
     document.removeEventListener('keydown', window.dialogCloseKeyDownHandler);
@@ -46,7 +46,7 @@
 
   window.dialogCloseKeyDownHandler = function (evt) {
     if (evt.keyCode === window.KEY_CODES.ESC) {
-      window.dialogCloseAction();
+      window.closeDialog();
     }
   };
 

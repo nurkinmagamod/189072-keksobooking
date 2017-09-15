@@ -7,6 +7,7 @@
   var APARTMENT_COST_MIN_VALUES = ['0', '1000', '5000', '10000'];
   var ROOM_NUMBER_VALUES = ['1', '2', '3', '100'];
   var ROOM_CAPACITIES = [['1'], ['2', '1'], ['3', '2', '1'], ['0']];
+  var DEFAULT_MIN_PRICE_VALUE = 1000;
 
   var timeIn = document.getElementById('timein');
   var timeOut = document.getElementById('timeout');
@@ -14,7 +15,6 @@
   var priceFormElement = document.getElementById('price');
   var roomNumber = document.getElementById('room_number');
   var capacityFormElement = document.getElementById('capacity');
-  var addressField = document.querySelector('#address');
   var titleField = document.querySelector('#title');
   var priceField = document.querySelector('#price');
   var noticeForm = document.querySelector('.notice__form');
@@ -73,7 +73,7 @@
 
   function validateNumber(input) {
     if (input.validity.rangeUnderflow) {
-      setInvalidField(input, 'Минимальное значение поля ' + input.min + ' максимально значение ' + input.max);
+      setInvalidField(input, 'Минимальное значение поля ' + input.min + ' максимальное значение ' + input.max);
     } else {
       clearInvalid(input);
     }
@@ -83,8 +83,8 @@
     addressFieldElement.value = 'x: ' + addressX + ' y: ' + addressY;
   };
 
-  addressField.addEventListener('invalid', function () {
-    validateValuePresence(addressField);
+  addressFieldElement.addEventListener('submit', function () {
+    validateValuePresence(addressFieldElement);
   });
   titleField.addEventListener('input', function () {
     validateTextLength(titleField);
@@ -100,9 +100,12 @@
   window.synchronizeFields(timeOut, timeIn, TIME_IN_OUT, TIME_IN_OUT, syncValues);
   window.synchronizeFields(apartmentTypeSelect, priceFormElement, APARTMENT_TYPE_VALUES, APARTMENT_COST_MIN_VALUES, syncValueWithMin);
   window.synchronizeFields(roomNumber, capacityFormElement, ROOM_NUMBER_VALUES, ROOM_CAPACITIES, syncValueWithOptions);
-
+  function setDefaultMinValue(defaultMinPriceValue) {
+    priceField.min = defaultMinPriceValue;
+  }
   function onSubmitSuccess() {
     window.showMessage('green', 'Данные успешно сохранены');
+    setDefaultMinValue(DEFAULT_MIN_PRICE_VALUE);
     noticeForm.reset();
   }
   function onSubmitError(msg) {
@@ -111,14 +114,8 @@
 
   noticeForm.addEventListener('submit', function (e) {
     e.preventDefault();
-    var formFields = noticeForm.elements;
-    for (var i = 0; i < formFields.length; i++) {
-      var currentField = formFields[i];
-      currentField.style.border = '';
-      if (!currentField.validity.valid) {
-        currentField.style.border = ERROR_OUTLINE;
-        return;
-      }
+    if (!addressFieldElement.value) {
+      addressFieldElement.style.border = ERROR_OUTLINE;
     }
 
     window.backend.save(

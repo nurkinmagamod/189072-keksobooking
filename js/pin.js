@@ -10,6 +10,7 @@
     ESC: 27,
     ENTER: 13
   };
+
   var pinElementsDestructors = [];
   var selectedTd;
   var nearbyAdsList = document.querySelector('.tokyo__pin-map');
@@ -18,11 +19,14 @@
     if (selectedTd) {
       selectedTd.classList.remove('pin--active');
     }
+    if (!node) {
+      return;
+    }
     selectedTd = node;
     selectedTd.classList.add('pin--active');
   };
 
-  window.renderPin = function (objToRend) {
+  window.renderPins = function (pinsContents) {
     var pinMapElement = document.querySelector('.tokyo__pin-map');
     var fragment = document.createDocumentFragment();
 
@@ -34,8 +38,8 @@
       pinMapElement.removeEventListener('keydown', pinKeyDownHandler);
     });
 
-    for (var i = 0; i < objToRend.length; i++) {
-      var currentObjToRend = objToRend[i];
+    for (var i = 0; i < pinsContents.length; i++) {
+      var currentObjToRend = pinsContents[i];
       var pinWrapper = document.createElement('div');
       var pinImage = document.createElement('img');
 
@@ -46,7 +50,7 @@
       pinWrapper.style.top = currentObjToRend.location.y - window.PIN_CONTAINER_HEIGHT + 'px';
       pinImage.className = 'rounded';
       pinImage.setAttribute('width', PIN_IMAGE_WIDTH);
-      pinImage.setAttribute('src', objToRend[i].author.avatar);
+      pinImage.setAttribute('src', pinsContents[i].author.avatar);
       pinImage.setAttribute('height', PIN_IMAGE_HEIGHT);
       pinWrapper.appendChild(pinImage);
       fragment.appendChild(pinWrapper);
@@ -59,7 +63,7 @@
 
   function pinKeyDownHandler(evt) {
     if (evt.keyCode === window.KEY_CODES.ENTER) {
-      window.showCard(window.offers);
+      window.showCard(window.getFilteredData());
       window.showDialog();
       window.highlight(evt.target.parentNode);
       document.addEventListener('keydown', window.dialogCloseKeyDownHandler);
@@ -71,9 +75,10 @@
   }
 
   function pinClickHandler(evt) {
+
     var pinMap = evt.target.tagName === 'DIV' ? evt.target : evt.target.parentNode;
     window.highlight(pinMap);
-    window.showCard(window.getFilteredData());
+    window.showCard(window.getFilteredData(), evt);
     addKeyDownListner();
     window.showDialog();
   }
