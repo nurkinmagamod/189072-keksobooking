@@ -1,4 +1,5 @@
 'use strict';
+
 (function () {
 
   var RUSSIAN_APARTMENT_TYPES = {

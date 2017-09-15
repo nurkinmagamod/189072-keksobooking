@@ -10,10 +10,7 @@
   var MAIN_PIN_MIN_Y = 73;
   var MAIN_PIN_MIN_X = -37;
 
-  var dialogCloseElement = document.querySelector('.dialog__close');
-  var offerDialog = document.getElementById('offer-dialog');
   var mainPin = document.querySelector('.pin__main');
-  var addressFieldElement = document.getElementById('address');
 
   function getBoundedCoords(possibleX, possibleY) {
     var coords = {x: possibleX, y: possibleY};
@@ -30,26 +27,6 @@
     }
     return coords;
   }
-
-  function dialogCloseClickHandler() {
-    window.closeDialog();
-  }
-
-  window.showDialog = function () {
-    offerDialog.classList.remove('hidden');
-  };
-
-  window.closeDialog = function () {
-    offerDialog.classList.add('hidden');
-    window.highlight();
-    document.removeEventListener('keydown', window.dialogCloseKeyDownHandler);
-  };
-
-  window.dialogCloseKeyDownHandler = function (evt) {
-    if (evt.keyCode === window.KEY_CODES.ESC) {
-      window.closeDialog();
-    }
-  };
 
   mainPin.addEventListener('mousedown', function (evt) {
     evt.preventDefault();
@@ -88,12 +65,14 @@
 
       window.changeAddressField(pinAddressX, pinAddressY);
     };
+
     var onMouseUp = function (upEvt) {
       upEvt.preventDefault();
 
       document.removeEventListener('mousemove', onMouseMove);
       document.removeEventListener('mouseup', onMouseUp);
     };
+
     document.addEventListener('mousemove', onMouseMove);
     document.addEventListener('mouseup', onMouseUp);
   });
@@ -122,8 +101,5 @@
     window.showMessage('red', msg);
   }
 
-  dialogCloseElement.addEventListener('click', dialogCloseClickHandler);
-  window.backend.load(function (data) {
-    window.setServerData(data);
-  }, onDataLoadError);
+  window.backend.load(window.setOffers, onDataLoadError);
 })();

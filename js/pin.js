@@ -1,4 +1,5 @@
 'use strict';
+
 (function () {
   window.PIN_CONTAINER_WIDTH = 56;
   window.PIN_CONTAINER_HEIGHT = 75;
@@ -11,7 +12,6 @@
     ENTER: 13
   };
 
-  var pinElementsDestructors = [];
   var selectedTd;
   var nearbyAdsList = document.querySelector('.tokyo__pin-map');
 
@@ -32,11 +32,6 @@
 
     pinMapElement.addEventListener('click', pinClickHandler);
     pinMapElement.addEventListener('keydown', pinKeyDownHandler);
-
-    pinElementsDestructors.push(function () {
-      pinMapElement.removeEventListener('click', pinClickHandler);
-      pinMapElement.removeEventListener('keydown', pinKeyDownHandler);
-    });
 
     for (var i = 0; i < pinsContents.length; i++) {
       var currentObjToRend = pinsContents[i];
@@ -63,8 +58,7 @@
 
   function pinKeyDownHandler(evt) {
     if (evt.keyCode === window.KEY_CODES.ENTER) {
-      window.showCard(window.getFilteredData(), evt);
-      window.showDialog();
+      window.showCard(window.getFilteredOffers(), evt);
       window.highlight(evt.target.parentNode);
       document.addEventListener('keydown', window.dialogCloseKeyDownHandler);
     }
@@ -80,9 +74,8 @@
     }
     var pinMap = evt.target.tagName === 'DIV' ? evt.target : evt.target.parentNode;
     window.highlight(pinMap);
-    window.showCard(window.getFilteredData(), evt);
+    window.showCard(window.getFilteredOffers(), evt);
     addKeyDownListner();
-    window.showDialog();
   }
 
   window.removePins = function () {
@@ -92,9 +85,5 @@
         elem.remove();
       }
     });
-    while (pinElementsDestructors.length > 0) {
-      var destructor = pinElementsDestructors.shift();
-      destructor();
-    }
   };
 })();

@@ -7,8 +7,8 @@
   var APARTMENT_COST_MIN_VALUES = ['0', '1000', '5000', '10000'];
   var ROOM_NUMBER_VALUES = ['1', '2', '3', '100'];
   var ROOM_CAPACITIES = [['1'], ['2', '1'], ['3', '2', '1'], ['0']];
-  var DEFAULT_MIN_PRICE_VALUE = 1000;
 
+  var formBindings = [];
   var timeIn = document.getElementById('timein');
   var timeOut = document.getElementById('timeout');
   var apartmentTypeSelect = document.getElementById('type');
@@ -23,9 +23,11 @@
   var syncValues = function (element, value) {
     element.value = value;
   };
+
   var syncValueWithMin = function (element, value) {
     element.min = value;
   };
+
   var syncValueWithOptions = function (element, enabledOptions) {
     var options = [].slice.call(element.querySelectorAll('option'));
     options.forEach(function (option) {
@@ -41,88 +43,128 @@
     });
   };
 
-  function setInvalidField(input, massage) {
-    if (!input.validity.valid) {
-      input.style.border = ERROR_OUTLINE;
-      input.setCustomValidity(massage);
-    }
+  function setInvalid(input, message) {
+    input.style.border = ERROR_OUTLINE;
+    input.setCustomValidity(message);
   }
 
   function clearInvalid(input) {
-    input.setCustomValidity('');
     input.style.border = '';
+    input.setCustomValidity('');
   }
 
-  function validateValuePresence(input) {
-    if (input.validity.valueMissing) {
-      setInvalidField(input, 'Это поле обязательно для заполнения !');
-    } else {
-      clearInvalid(input);
+  var validateTitle = function () {
+    var titleValidity = titleField.validity;
+    var customValidity;
+    if (titleValidity.valueMissing) {
+      customValidity = 'Это поле обязательно для заполнения !';
+    } else if (titleValidity.tooLong) {
+      customValidity = 'Название должно быть не длиннее' + titleField.maxLength + ' символов';
+    } else if (titleValidity.tooShort) {
+      customValidity = 'Названиe не должно быть короче ' + titleField.minLength + ' символов';
     }
+
+    if (customValidity) {
+      setInvalid(titleField, customValidity);
+    } else {
+      clearInvalid(titleField);
+    }
+  };
+
+  var validatePrice = function () {
+    var priceValidity = priceField.validity;
+    var customValidity;
+    if (priceValidity.valueMissing) {
+      customValidity = 'Это поле обязательно для заполнения !';
+    } else if (priceValidity.rangeOverflow) {
+      customValidity = 'Цена не должна быть больше ' + priceField.max;
+    } else if (priceValidity.rangeUnderflow) {
+      customValidity = 'Цена не должна быть меньше ' + priceField.min;
+    }
+
+    if (customValidity) {
+      setInvalid(priceField, customValidity);
+    } else {
+      clearInvalid(priceField);
+    }
+  };
+
+  function isAddressValid() {
+    return !!addressFieldElement.value;
   }
 
-  function validateTextLength(input) {
-    if (input.validity.tooLong) {
-      setInvalidField(input, 'Название должно содержать не более' + input.maxLength + ' символов');
-    } else if (input.validity.tooShort || input.value.length < input.minLength) {
-      setInvalidField(input, 'В названии должно быть не менее ' + input.minLength + ' символов');
+  function validateAddress() {
+    var isValid = isAddressValid();
+    if (isAddressValid()) {
+      clearInvalid(addressFieldElement);
     } else {
-      clearInvalid(input);
+      setInvalid(addressFieldElement, 'Укажите адрес!');
+      window.showMessage('red', 'Укажите адрес, перетащив маркер на карте');
     }
-  }
 
-  function validateNumber(input) {
-    if (input.validity.rangeUnderflow) {
-      setInvalidField(input, 'Минимальное значение поля ' + input.min + ' максимальное значение ' + input.max);
-    } else {
-      clearInvalid(input);
-    }
+    return isValid;
   }
 
   window.changeAddressField = function (addressX, addressY) {
-    addressFieldElement.style.border = '';
+    clearInvalid(addressFieldElement);
     addressFieldElement.value = 'x: ' + addressX + ' y: ' + addressY;
   };
 
-  addressFieldElement.addEventListener('submit', function () {
-    validateValuePresence(addressFieldElement);
-  });
-  titleField.addEventListener('input', function () {
-    validateTextLength(titleField);
-  });
-  titleField.addEventListener('invalid', function () {
-    validateTextLength(titleField);
-  });
-  priceField.addEventListener('invalid', function () {
-    validateNumber(priceField);
-  });
+  titleField.addEventListener('input', validateTitle);
+  titleField.addEventListener('invalid', validateTitle);
 
-  window.synchronizeFields(timeIn, timeOut, TIME_IN_OUT, TIME_IN_OUT, syncValues);
-  window.synchronizeFields(timeOut, timeIn, TIME_IN_OUT, TIME_IN_OUT, syncValues);
-  window.synchronizeFields(apartmentTypeSelect, priceFormElement, APARTMENT_TYPE_VALUES, APARTMENT_COST_MIN_VALUES, syncValueWithMin);
-  window.synchronizeFields(roomNumber, capacityFormElement, ROOM_NUMBER_VALUES, ROOM_CAPACITIES, syncValueWithOptions);
-  function setDefaultMinValue(defaultMinPriceValue) {
-    priceField.min = defaultMinPriceValue;
+  priceField.addEventListener('input', validatePrice);
+  priceField.addEventListener('invalid', validatePrice);
+
+  function initForm() {
+    [
+      window.synchronizeFields(timeIn, timeOut, TIME_IN_OUT, TIME_IN_OUT, syncValues),
+      window.synchronizeFields(timeOut, timeIn, TIME_IN_OUT, TIME_IN_OUT, syncValues),
+      window.synchronizeFields(apartmentTypeSelect, priceFormElement, APARTMENT_TYPE_VALUES, APARTMENT_COST_MIN_VALUES, syncValueWithMin),
+      window.synchronizeFields(roomNumber, capacityFormElement, ROOM_NUMBER_VALUES, ROOM_CAPACITIES, syncValueWithOptions)
+    ].forEach(function (bindingDestructor) {
+      formBindings.push(bindingDestructor);
+    });
   }
+
+  function clearFormBindings() {
+    while (formBindings.length > 0) {
+      var bindingDestructor = formBindings.shift();
+      bindingDestructor();
+    }
+  }
+
   function onSubmitSuccess() {
     window.showMessage('green', 'Данные успешно сохранены');
-    setDefaultMinValue(DEFAULT_MIN_PRICE_VALUE);
     noticeForm.reset();
+    clearFormBindings();
+    initForm();
   }
-  function onSubmitError(msg) {
-    window.showMessage('red', msg);
+
+  function onSubmitError() {
+    window.showMessage('red', 'Произошла ошибка при отправке формы');
   }
+
+  initForm();
 
   noticeForm.addEventListener('submit', function (e) {
     e.preventDefault();
-    if (!addressFieldElement.value) {
-      addressFieldElement.style.border = ERROR_OUTLINE;
+    var isFormInvalid = [
+      titleField.checkValidity(),
+      priceField.checkValidity(),
+      validateAddress()
+    ].some(function (isFiledValid) {
+      return !isFiledValid;
+    });
+
+    if (isFormInvalid) {
       return;
     }
 
     window.backend.save(
         new FormData(noticeForm),
         onSubmitSuccess,
-        onSubmitError);
+        onSubmitError
+    );
   });
 })();

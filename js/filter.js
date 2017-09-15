@@ -1,7 +1,7 @@
 'use strict';
 
 (function () {
-  var filteredData;
+  var filteredOffers;
   var loadedOffers = [];
   var filters = document.querySelectorAll('.tokyo__filter');
   var filtersForm = document.querySelector('.tokyo__filters');
@@ -62,16 +62,17 @@
 
   var filteringMethods = [filterOffersByType, filterOffersByRoomCapacity, filterOffersByPrice, filterOffersByGuestsNumber, filterByFeatures];
 
-  window.setServerData = function (serverData) {
-    loadedOffers = serverData;
+  window.setOffers = function (offers) {
+    loadedOffers = offers;
     updateAfterFiltering();
   };
-  window.getFilteredData = function () {
-    return filteredData;
+
+  window.getFilteredOffers = function () {
+    return filteredOffers;
   };
 
   var updateAfterFiltering = function () {
-    var newFilteredData = loadedOffers.filter(function (elem) {
+    var newFilteredOffers = loadedOffers.filter(function (elem) {
       for (var i = 0; i < filteringMethods.length; i++) {
         var filterFn = filteringMethods[i];
         if (!filterFn(elem)) {
@@ -81,14 +82,14 @@
       return true;
     });
 
-    filteredData = !filteredData ? newFilteredData.slice(0, 3) : newFilteredData;
+    filteredOffers = !filteredOffers ? newFilteredOffers.slice(0, 3) : newFilteredOffers;
 
     window.removePins();
-    window.renderPins(filteredData);
-    if (typeof filteredData[0] === 'undefined') {
+    window.renderPins(filteredOffers);
+    if (typeof filteredOffers[0] === 'undefined') {
       return;
     }
-    window.renderDialogPanel(filteredData[0]);
+    window.renderDialogPanel(filteredOffers[0]);
   };
 
   var updateFuncWithDebounce = window.debounce(updateAfterFiltering);
@@ -96,8 +97,8 @@
   filters.forEach(function (elem) {
     elem.addEventListener('change', updateFuncWithDebounce);
   });
+
   allFeatures.forEach(function (elem) {
     elem.addEventListener('change', updateFuncWithDebounce);
   });
-
 })();
