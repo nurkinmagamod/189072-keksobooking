@@ -63,7 +63,7 @@
 
   function pinKeyDownHandler(evt) {
     if (evt.keyCode === window.KEY_CODES.ENTER) {
-      window.showCard(window.getFilteredData());
+      window.showCard(window.getFilteredData(), evt);
       window.showDialog();
       window.highlight(evt.target.parentNode);
       document.addEventListener('keydown', window.dialogCloseKeyDownHandler);
@@ -75,7 +75,9 @@
   }
 
   function pinClickHandler(evt) {
-
+    if (evt.target.classList.contains('pin__main') || evt.target.parentNode.classList.contains('pin__main')) {
+      return;
+    }
     var pinMap = evt.target.tagName === 'DIV' ? evt.target : evt.target.parentNode;
     window.highlight(pinMap);
     window.showCard(window.getFilteredData(), evt);

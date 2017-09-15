@@ -13,6 +13,7 @@
   var dialogCloseElement = document.querySelector('.dialog__close');
   var offerDialog = document.getElementById('offer-dialog');
   var mainPin = document.querySelector('.pin__main');
+  var addressFieldElement = document.getElementById('address');
 
   function getBoundedCoords(possibleX, possibleY) {
     var coords = {x: possibleX, y: possibleY};
@@ -60,6 +61,7 @@
     var onMouseMove = function (moveEvt) {
       moveEvt.preventDefault();
       mainPin.style.zIndex = 998;
+      addressFieldElement.style.border = '';
 
       var shift = {
         x: startCoords.x - moveEvt.clientX,

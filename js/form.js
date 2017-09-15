@@ -116,6 +116,7 @@
     e.preventDefault();
     if (!addressFieldElement.value) {
       addressFieldElement.style.border = ERROR_OUTLINE;
+      return;
     }
 
     window.backend.save(
