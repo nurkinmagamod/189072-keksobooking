@@ -15,8 +15,8 @@
   var priceFormElement = document.getElementById('price');
   var roomNumber = document.getElementById('room_number');
   var capacityFormElement = document.getElementById('capacity');
-  var titleField = document.querySelector('#title');
-  var priceField = document.querySelector('#price');
+  var titleField = document.getElementById('title');
+  var priceField = document.getElementById('price');
   var noticeForm = document.querySelector('.notice__form');
   var addressFieldElement = document.getElementById('address');
 
@@ -34,9 +34,7 @@
       var optionValueIdx = enabledOptions.indexOf(option.value);
       if (optionValueIdx > -1) {
         option.disabled = false;
-        if (optionValueIdx === 0) {
-          option.selected = true;
-        }
+        option.selected = optionValueIdx === 0;
       } else {
         option.disabled = true;
       }
@@ -89,39 +87,39 @@
     }
   };
 
-  function isAddressValid() {
+  var isAddressValid = function () {
     return !!addressFieldElement.value;
-  }
+  };
 
-  function validateAddress() {
+  var validateAddress = function () {
     var isValid = isAddressValid();
     if (isAddressValid()) {
       clearInvalid(addressFieldElement);
     } else {
       setInvalid(addressFieldElement, 'Укажите адрес!');
-      window.showMessage('red', 'Укажите адрес, перетащив маркер на карте');
+      window.map.showMessage('red', 'Укажите адрес, перетащив маркер на карте');
     }
-
     return isValid;
-  }
+  };
 
-  window.changeAddressField = function (addressX, addressY) {
-    clearInvalid(addressFieldElement);
-    addressFieldElement.value = 'x: ' + addressX + ' y: ' + addressY;
+  window.form = {
+    changeAddressField: function (addressX, addressY) {
+      clearInvalid(addressFieldElement);
+      addressFieldElement.value = 'x: ' + addressX + ' y: ' + addressY;
+    }
   };
 
   titleField.addEventListener('input', validateTitle);
   titleField.addEventListener('invalid', validateTitle);
-
   priceField.addEventListener('input', validatePrice);
   priceField.addEventListener('invalid', validatePrice);
 
   function initForm() {
     [
-      window.synchronizeFields(timeIn, timeOut, TIME_IN_OUT, TIME_IN_OUT, syncValues),
-      window.synchronizeFields(timeOut, timeIn, TIME_IN_OUT, TIME_IN_OUT, syncValues),
-      window.synchronizeFields(apartmentTypeSelect, priceFormElement, APARTMENT_TYPE_VALUES, APARTMENT_COST_MIN_VALUES, syncValueWithMin),
-      window.synchronizeFields(roomNumber, capacityFormElement, ROOM_NUMBER_VALUES, ROOM_CAPACITIES, syncValueWithOptions)
+      window.synchronizeFields.syncFields(timeIn, timeOut, TIME_IN_OUT, TIME_IN_OUT, syncValues),
+      window.synchronizeFields.syncFields(timeOut, timeIn, TIME_IN_OUT, TIME_IN_OUT, syncValues),
+      window.synchronizeFields.syncFields(apartmentTypeSelect, priceFormElement, APARTMENT_TYPE_VALUES, APARTMENT_COST_MIN_VALUES, syncValueWithMin),
+      window.synchronizeFields.syncFields(roomNumber, capacityFormElement, ROOM_NUMBER_VALUES, ROOM_CAPACITIES, syncValueWithOptions)
     ].forEach(function (bindingDestructor) {
       formBindings.push(bindingDestructor);
     });
@@ -135,14 +133,14 @@
   }
 
   function onSubmitSuccess() {
-    window.showMessage('green', 'Данные успешно сохранены');
+    window.map.showMessage('green', 'Данные успешно сохранены');
     noticeForm.reset();
     clearFormBindings();
     initForm();
   }
 
   function onSubmitError() {
-    window.showMessage('red', 'Произошла ошибка при отправке формы');
+    window.map.showMessage('red', 'Произошла ошибка при отправке формы');
   }
 
   initForm();

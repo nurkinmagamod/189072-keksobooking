@@ -5,20 +5,15 @@
   var loadedOffers = [];
   var filters = document.querySelectorAll('.tokyo__filter');
   var filtersForm = document.querySelector('.tokyo__filters');
-  var housingType = filtersForm.querySelector('#housing_type');
-  var housingPrice = filtersForm.querySelector('#housing_price');
+  var housingType = document.getElementById('housing_type');
+  var housingPrice = document.getElementById('housing_price');
   var allFeatures = filtersForm.querySelectorAll('.feature input');
-  var housingGuestsNumber = filtersForm.querySelector('#housing_guests-number');
-  var housingRoomCapacity = filtersForm.querySelector('#housing_room-number');
+  var housingGuestsNumber = document.getElementById('housing_guests-number');
+  var housingRoomCapacity = document.getElementById('housing_room-number');
 
   var filterOffersByType = function (elem) {
-    if (housingType.value === 'any') {
-      return loadedOffers;
-    } else {
-      return elem.offer.type === housingType.value;
-    }
+    return housingType.value === 'any' ? loadedOffers : elem.offer.type === housingType.value;
   };
-
   var filterOffersByPrice = function (elem) {
     switch (housingPrice.value) {
       case 'any':
@@ -35,19 +30,11 @@
   };
 
   var filterOffersByRoomCapacity = function (elem) {
-    if (housingRoomCapacity.value === 'any') {
-      return loadedOffers;
-    } else {
-      return elem.offer.rooms === parseInt(housingRoomCapacity.value, 10);
-    }
+    return housingRoomCapacity.value === 'any' ? loadedOffers : elem.offer.rooms === parseInt(housingRoomCapacity.value, 10);
   };
 
   var filterOffersByGuestsNumber = function (elem) {
-    if (housingGuestsNumber.value === 'any') {
-      return loadedOffers;
-    } else {
-      return elem.offer.guests === parseInt(housingGuestsNumber.value, 10);
-    }
+    return housingGuestsNumber.value === 'any' ? loadedOffers : elem.offer.guests === parseInt(housingGuestsNumber.value, 10);
   };
 
   var filterByFeatures = function (elem) {
@@ -62,13 +49,14 @@
 
   var filteringMethods = [filterOffersByType, filterOffersByRoomCapacity, filterOffersByPrice, filterOffersByGuestsNumber, filterByFeatures];
 
-  window.setOffers = function (offers) {
-    loadedOffers = offers;
-    updateAfterFiltering();
-  };
-
-  window.getFilteredOffers = function () {
-    return filteredOffers;
+  window.filter = {
+    setOffers: function (offers) {
+      loadedOffers = offers;
+      updateAfterFiltering();
+    },
+    getFilteredOffers: function () {
+      return filteredOffers;
+    }
   };
 
   var updateAfterFiltering = function () {
@@ -84,15 +72,15 @@
 
     filteredOffers = !filteredOffers ? newFilteredOffers.slice(0, 3) : newFilteredOffers;
 
-    window.removePins();
-    window.renderPins(filteredOffers);
+    window.pin.removePins();
+    window.pin.renderPins(filteredOffers);
     if (typeof filteredOffers[0] === 'undefined') {
       return;
     }
-    window.renderDialogPanel(filteredOffers[0]);
+    window.card.renderDialogPanel(filteredOffers[0]);
   };
 
-  var updateFuncWithDebounce = window.debounce(updateAfterFiltering);
+  var updateFuncWithDebounce = window.debounce.funcDebounce(updateAfterFiltering);
 
   filters.forEach(function (elem) {
     elem.addEventListener('change', updateFuncWithDebounce);
